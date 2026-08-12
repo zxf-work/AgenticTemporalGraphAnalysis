@@ -61,3 +61,24 @@ optimization. Those are reserved for later papers (P1, P0/ATG-Bench, P2, P3, P4,
 4. Determinism — every generator seeded; every run manifest records world hash, prompt hash, model
    version, and code commit; all reported numbers regenerate from one results artifact.
 5. Pair accuracy above 95% for a non-oracle agent is a leakage alarm, not a success. Audit first.
+
+
+## Reproducing the paper
+
+`data/` (compiled worlds and task records) is generated, not committed; it is regenerated
+deterministically from `configs/mechanisms.yaml`, so a fresh clone reproduces byte-identical
+worlds. `runs/` holds the scored results and stored traces that every figure and number is read
+from.
+
+```
+python scripts/paper_numbers.py        # every number quoted in the paper
+python scripts/figure1.py              # M4 accuracy vs evidence validity
+python scripts/figure2.py              # M1 capability frontier + reconstruction
+python scripts/figure_framework.py     # staged profile and the four mechanisms
+python scripts/bootstrap_contrast.py   # the one reported confidence interval
+python scripts/rescore.py --all        # rebuild scored rows from stored traces
+python scripts/replay_backend.py --all # backend cost, no LLM calls
+```
+
+Requires Python 3.11 with `numpy`, `matplotlib` and `pyyaml`. Only `run_matrix.py` needs model
+credentials; everything above runs offline from the committed outputs.

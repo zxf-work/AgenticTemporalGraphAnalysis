@@ -64,7 +64,11 @@ for d in dirs:
             continue
         try:
             trace = Trace.from_dict(json.loads(tp.read_text()))
-            rec = record_for(row, mcfg, xcfg, cache)
+            # write=True materialises the world CSV if it is absent. `data/` is generated, not
+            # committed, so in a fresh clone every run would otherwise be skipped for a missing
+            # world file. Compilation is deterministic from the frozen config, so regenerating
+            # reproduces the identical world -- the hash check below still guards that.
+            rec = record_for(row, mcfg, xcfg, cache, write=True)
             if rec.world_hash != trace.world_hash:
                 skipped += 1
                 continue
