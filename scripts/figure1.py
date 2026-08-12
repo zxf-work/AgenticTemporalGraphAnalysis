@@ -104,7 +104,7 @@ GREEN, RED = "#2E7D32", "#C62828"
 
 ax2.axvspan(tc, tc + adm, color=GREEN, alpha=0.13, lw=0, zorder=0)
 ax2.axvline(tc, color=GREEN, lw=1.2, zorder=2, ymax=0.92)
-ax2.text(tc, 3.46, "$t_c$ — closure wave completes", fontsize=6.6, color=GREEN, ha="center")
+ax2.text(tc, 3.46, "$t_c$: closure wave completes", fontsize=6.6, color=GREEN, ha="center")
 ax2.annotate("", xy=(tc, 2.90), xytext=(tc + adm, 2.90),
              arrowprops=dict(arrowstyle="<->", color=GREEN, lw=0.9, shrinkA=0, shrinkB=0))
 ax2.text(tc + adm / 2, 3.02, f"admissible {adm}", fontsize=6.3, color=GREEN, ha="center")
@@ -124,7 +124,7 @@ a, b = EX["cited_query"]
 ax2.plot([a, b], [0.6, 0.6], color=C["A3"], lw=6.5, alpha=0.45, zorder=3, solid_capstyle="butt")
 ax2.text(lo - 400, 0.6, "query", fontsize=7.5, ha="right", va="center", color=C["A3"])
 ax2.text((a + b) / 2, 0.0,
-         "cited reachability window — spans both cascades,\n"
+         "cited reachability window spans both cascades,\n"
          "so it returns “reachable” in $G^{+}$ and $G^{-}$ alike",
          fontsize=6.5, color=C["A3"], ha="center", va="center")
 
@@ -132,7 +132,7 @@ ax2.set_xlim(lo - 5200, hi + 3400)
 ax2.set_ylim(-0.75, 3.85)
 ax2.set_yticks([])
 ax2.spines["left"].set_visible(False)
-ax2.set_xlabel("time   ·   gpt-5-mini, A3, seed 0 — answer correct, evidence not")
+ax2.set_xlabel("time   ·   gpt-5-mini, A3, seed 0: answer correct, evidence invalid")
 ax2.set_title("(b) the composition happens in prose, not in the query", loc="left")
 
 fig.tight_layout(w_pad=1.4)

@@ -94,7 +94,7 @@ ax.plot([min(tested), max(tested)], [1.0, 1.0], color=C["A3"], lw=6, alpha=0.22,
         solid_capstyle="butt", zorder=1)
 for R in tested:
     ax.plot([R], [1.0], marker="|", ms=7, color=C["A3"], mew=1.4, alpha=0.9, zorder=2)
-ax.text(29, 1.20, "A2 and A3 — both models, 1.00", fontsize=6.6, color=C["A3"], va="center")
+ax.text(29, 1.20, "A2 and A3: both models, 1.00", fontsize=6.6, color=C["A3"], va="center")
 ax.text(29, 1.12, f"at every $R$ run ({', '.join(str(r) for r in tested)})", fontsize=6.6,
         color=C["A3"], va="center")
 
@@ -103,7 +103,7 @@ ax.plot(RS, [A[("A1", "claude-opus-5")][R][0] for R in RS], color=C["A1"], lw=1.
 ax.plot(RS, [A[("A1", "gpt-5-mini")][R][0] for R in RS], color=C["mini"], lw=1.4, ls="--",
         marker="s", ms=3.6, zorder=2)
 ax.text(206, 0.85, "A1 · Opus 5", fontsize=7, color=C["A1"])
-ax.text(38, 0.115, "A1 · gpt-5-mini — 00000 at every $R$", fontsize=6.5, color=C["mini"])
+ax.text(38, 0.115, "A1 · gpt-5-mini: 00000 at every $R$", fontsize=6.5, color=C["mini"])
 
 # n = 5, so show the per-seed outcomes; offsets are staggered because the two zero cells sit
 # adjacent and their labels overlapped when placed identically.
