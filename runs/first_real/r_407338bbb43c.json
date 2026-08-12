@@ -1,0 +1,338 @@
+{
+ "run_id": "r_407338bbb43c",
+ "task_id": "t_dc3dfaa5",
+ "pair_id": "m1_none_seed000",
+ "world_hash": "84a17cd9dec938d1",
+ "agent_condition": "A3",
+ "model": "gpt-5-mini",
+ "prompt_hash": "85491ab8c2b57697",
+ "code_commit": "",
+ "tool_budget": 20,
+ "steps": [
+  {
+   "step_id": "step_01",
+   "tool": "graph_summary",
+   "args": {
+    "window": [
+     23269,
+     27907
+    ]
+   },
+   "result_digest": "07a288329f5bf7f2",
+   "result_summary": "{\"n_active_nodes\": 445, \"n_distinct_edges\": 347, \"n_events\": 348, \"n_nodes_total\": 2000, \"repeat_ratio\": 0.0029, \"t_max\": 27907, \"t_min\": 23277, \"window\": [23269, 27907]}",
+   "latency_ms": 0,
+   "tokens_before": 1743,
+   "tokens_after": 1743,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_02",
+   "tool": "temporal_reachability",
+   "args": {
+    "source": 86,
+    "target": 1356,
+    "window": [
+     23269,
+     27907
+    ],
+    "max_wait": 600
+   },
+   "result_digest": "25e2c7b94969cf34",
+   "result_summary": "{\"max_wait\": 600, \"n_nodes_reached\": 8, \"reached\": false, \"source\": 86, \"target\": 1356, \"window\": [23269, 27907]}",
+   "latency_ms": 10,
+   "tokens_before": 3593,
+   "tokens_after": 3593,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_03",
+   "tool": "edges_between",
+   "args": {
+    "u": 86,
+    "v": 1356,
+    "window": [
+     23269,
+     27907
+    ]
+   },
+   "result_digest": "4d66ff82d67d151b",
+   "result_summary": "{\"connected\": false, \"n_events_u_to_v\": 0, \"n_events_v_to_u\": 0, \"u\": 86, \"v\": 1356, \"window\": [23269, 27907]}",
+   "latency_ms": 0,
+   "tokens_before": 5546,
+   "tokens_after": 5546,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_04",
+   "tool": "top_active_nodes",
+   "args": {
+    "k": 20,
+    "window": [
+     23269,
+     27907
+    ]
+   },
+   "result_digest": "3dfb9952735a3ad0",
+   "result_summary": "{\"top\": [{\"events\": 32, \"node\": 28}, {\"events\": 13, \"node\": 1583}, {\"events\": 8, \"node\": 781}, {\"events\": 8, \"node\": 1141}, {\"events\": 8, \"node\": 1356}, {\"events\": 8, \"node\": 1584}, {\"events\": 7, \"node\": 86}, {\"events\": 6, \"node\": 2}, {\"events\": 6, \"node\": 325}, {\"events\": 6, \"node\": 524}, {\"events\": 6, \"node\": 810}, {\"events\": 6, \"node\": 1555}, {\"events\": 5, \"node\": 1027}, {\"events\": 4, \"node\": 63}, {\"events\": 4, \"node\": 636}, {\"events\": 4, \"node\": 766}, {\"events\": 4, \"node\": 880}, {\"events\": 4, \"node\": 1049}, {\"events\": 4, \"node\": 1399}, {\"events\": 4, \"node\": 1768}], \"window\": [23269, 27907]}",
+   "latency_ms": 1,
+   "tokens_before": 7594,
+   "tokens_after": 7594,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_05",
+   "tool": "temporal_reachability",
+   "args": {
+    "source": 86,
+    "target": 1356,
+    "window": [
+     23269,
+     27907
+    ]
+   },
+   "result_digest": "5e1cdaefb8dd9cf0",
+   "result_summary": "{\"max_wait\": null, \"n_nodes_reached\": 9, \"reached\": false, \"source\": 86, \"target\": 1356, \"window\": [23269, 27907]}",
+   "latency_ms": 10,
+   "tokens_before": 9948,
+   "tokens_after": 9948,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_06",
+   "tool": "temporal_paths",
+   "args": {
+    "source": 86,
+    "target": 1356,
+    "window": [
+     23269,
+     27907
+    ],
+    "max_wait": 600,
+    "max_paths": 10
+   },
+   "result_digest": "4ce95370e221ea0a",
+   "result_summary": "{\"paths\": []}",
+   "latency_ms": 5,
+   "tokens_before": 12399,
+   "tokens_after": 12399,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_07",
+   "tool": "khop_subgraph",
+   "args": {
+    "node": 86,
+    "k": 2,
+    "window": [
+     23269,
+     27907
+    ]
+   },
+   "result_digest": "b51f4db8ddb1638e",
+   "result_summary": "{\"center\": 86, \"edges\": [[61, 86], [61, 1376], [63, 192], [86, 61], [86, 192], [86, 909], [86, 933], [86, 939], [86, 971], [86, 1776], [184, 909], [192, 63], [192, 86], [192, 1039], [251, 939], [340, 971], [359, 1776], [909, 86], [909, 184], [933, 86], [933, 1768], [939, 86], [939, 251], [971, 86], [971, 340], [1039, 192], [1376, 61], [1768, 933], [1776, 86], [1776, 359]], \"k\": 2, \"n_edges\": 30, \"n_nodes\": 16, \"nodes\": [61, 63, 86, 184, 192, 251, 340, 359, 909, 933, 939, 971, 1039, 1376, 1768, 1776], \"truncated\": false}",
+   "latency_ms": 1,
+   "tokens_before": 14913,
+   "tokens_after": 14913,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_08",
+   "tool": "khop_subgraph",
+   "args": {
+    "node": 1356,
+    "k": 2,
+    "window": [
+     23269,
+     27907
+    ]
+   },
+   "result_digest": "341ae42d5a1924ca",
+   "result_summary": "{\"center\": 1356, \"edges\": [[40, 741], [40, 1356], [115, 1321], [151, 325], [294, 1118], [325, 151], [325, 435], [325, 441], [325, 1329], [325, 1356], [325, 1839], [330, 1268], [435, 325], [441, 325], [659, 1113], [741, 40], [765, 1281], [997, 1281], [1113, 659], [1113, 1356], [1118, 294], [1118, 1356], [1268, 330], [1268, 1356], [1268, 1822], [1281, 765], [1281, 997], [1281, 1356], [1321, 115], [1321, 1356], [1329, 325], [1356, 40], [1356, 325], [1356, 1113], [1356, 1118], [1356, 1268], [1356, 1281], [1356, 1321], [1356, 1540], [1522, 1540], [1540, 1356], [1540, 1522], [1822, 1268], [1839, 325]], \"k\": 2, \"n_edges\": 44, \"n_nodes\": 23, \"nodes\": [40, 115, 151, 294, 325, 330, 435, 441, 659, 741, 765, 997, 1113, 1118, 1268, 1281, 1321, 1329, 1356, 1522, 1540, 1822, 1839], \"truncated\": false}",
+   "latency_ms": 0,
+   "tokens_before": 17756,
+   "tokens_after": 17756,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_09",
+   "tool": "neighbors",
+   "args": {
+    "node": 86,
+    "window": [
+     23269,
+     27907
+    ],
+    "direction": "out"
+   },
+   "result_digest": "048f6836b77af174",
+   "result_summary": "{\"direction\": \"out\", \"n_neighbors\": 7, \"neighbors\": [61, 192, 909, 933, 939, 971, 1776], \"node\": 86, \"window\": [23269, 27907]}",
+   "latency_ms": 0,
+   "tokens_before": 21084,
+   "tokens_after": 21084,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_10",
+   "tool": "neighbors",
+   "args": {
+    "node": 86,
+    "window": [
+     23269,
+     27907
+    ],
+    "direction": "in"
+   },
+   "result_digest": "b3197aaff56d7633",
+   "result_summary": "{\"direction\": \"in\", \"n_neighbors\": 0, \"neighbors\": [], \"node\": 86, \"window\": [23269, 27907]}",
+   "latency_ms": 0,
+   "tokens_before": 24511,
+   "tokens_after": 24511,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_11",
+   "tool": "neighbors",
+   "args": {
+    "node": 1356,
+    "window": [
+     23269,
+     27907
+    ],
+    "direction": "in"
+   },
+   "result_digest": "e5047d2256d362bd",
+   "result_summary": "{\"direction\": \"in\", \"n_neighbors\": 8, \"neighbors\": [40, 325, 1113, 1118, 1268, 1281, 1321, 1540], \"node\": 1356, \"window\": [23269, 27907]}",
+   "latency_ms": 0,
+   "tokens_before": 28016,
+   "tokens_after": 28016,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_12",
+   "tool": "temporal_reachability",
+   "args": {
+    "source": 86,
+    "window": [
+     23269,
+     27907
+    ],
+    "max_wait": 600
+   },
+   "result_digest": "e007017fa3db42b8",
+   "result_summary": "{\"max_wait\": 600, \"n_nodes_reached\": 8, \"source\": 86, \"target\": null, \"window\": [23269, 27907]}",
+   "latency_ms": 10,
+   "tokens_before": 31630,
+   "tokens_after": 31630,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_13",
+   "tool": "window_event_count",
+   "args": {
+    "windows": [
+     [
+      23269,
+      24000
+     ],
+     [
+      24001,
+      25000
+     ],
+     [
+      25001,
+      26000
+     ],
+     [
+      26001,
+      27000
+     ],
+     [
+      27001,
+      27907
+     ]
+    ],
+    "nodes": [
+     86,
+     1356
+    ]
+   },
+   "result_digest": "5caacb58bf7205ca",
+   "result_summary": "{\"counts\": [{\"n_events\": 4, \"window\": [23269, 24000]}, {\"n_events\": 2, \"window\": [24001, 25000]}, {\"n_events\": 3, \"window\": [25001, 26000]}, {\"n_events\": 2, \"window\": [26001, 27000]}, {\"n_events\": 4, \"window\": [27001, 27907]}]}",
+   "latency_ms": 8,
+   "tokens_before": 35334,
+   "tokens_after": 35334,
+   "ok": true,
+   "error": ""
+  }
+ ],
+ "final_claim": {
+  "task_id": "t_dc3dfaa5",
+  "decision": "absent",
+  "mechanism": "cascade",
+  "entities": [
+   86,
+   1356
+  ],
+  "window": [
+   23269,
+   27907
+  ],
+  "confidence": 0.9,
+  "evidence": [
+   {
+    "trace_id": "step_02",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_06",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_05",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_03",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_07",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_08",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_04",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_13",
+    "role": "confounder_control"
+   }
+  ],
+  "narrative": "Temporal reachability checks with a 600-unit max wait (step_02) and explicit temporal path enumeration (step_06) find no time-respecting route from 86 to 1356 in [23269,27907]; reachability without a wait constraint is also false (step_05). There is no direct interaction between the two nodes in the interval (step_03) and their 2-hop neighborhoods do not overlap (steps_07 and 08), so a static connection does not hide a temporal route. Both nodes are active in the window (step_04 and step_13), which could be a confounder suggesting possible influence, but the temporal evidence itself shows no cascade."
+ },
+ "raw_final_response": "{\n  \"task_id\": \"t_dc3dfaa5\",\n  \"decision\": \"absent\",\n  \"mechanism\": \"cascade\",\n  \"entities\": [86, 1356],\n  \"window\": [23269, 27907],\n  \"confidence\": 0.90,\n  \"evidence\": [\n    {\"trace_id\": \"step_02\", \"role\": \"support\"},\n    {\"trace_id\": \"step_06\", \"role\": \"support\"},\n    {\"trace_id\": \"step_05\", \"role\": \"support\"},\n    {\"trace_id\": \"step_03\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_07\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_08\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_04\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_13\", \"role\": \"confounder_control\"}\n  ],\n  \"narrative\": \"Temporal reachability checks with a 600-unit max wait (step_02) and explicit temporal path enumeration (step_06) find no time-respecting route from 86 to 1356 in [23269,27907]; reachability without a wait constraint is also false (step_05). There is no direct interaction between the two nodes in the interval (step_03) and their 2-hop neighborhoods do not overlap (steps_07 and 08), so a static connection does not hide a temporal route. Both nodes are active in the window (step_04 and step_13), which could be a confounder suggesting possible influence, but the temporal evidence itself shows no cascade.\"\n}",
+ "total_input_tokens": 39204,
+ "total_output_tokens": 3064,
+ "total_tokens": 42268,
+ "total_latency_ms": 47624,
+ "llm_calls": 14,
+ "schema_repairs": 0,
+ "status": "success",
+ "error": ""
+}

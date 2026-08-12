@@ -1,0 +1,533 @@
+{
+ "run_id": "r_8ed8423a8dfe",
+ "task_id": "t_20982933",
+ "pair_id": "m1_none_seed001",
+ "world_hash": "bebd1c2c83c26822",
+ "agent_condition": "A1",
+ "model": "gpt-5-mini",
+ "prompt_hash": "c0ec12174d5fc356",
+ "code_commit": "",
+ "tool_budget": 20,
+ "steps": [
+  {
+   "step_id": "step_01",
+   "tool": "graph_summary",
+   "args": {
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "139662f8ee081a87",
+   "result_summary": "{\"n_active_nodes\": 493, \"n_distinct_edges\": 383, \"n_events\": 384, \"n_nodes_total\": 2000, \"repeat_ratio\": 0.0026, \"t_max\": 27642, \"t_min\": 23108, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 1111,
+   "tokens_after": 1111,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_02",
+   "tool": "khop_subgraph",
+   "args": {
+    "node": 1220,
+    "k": 3,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "5f205c134bf778ba",
+   "result_summary": "{\"center\": 1220, \"edges\": [[26, 1374], [66, 74], [74, 66], [74, 986], [250, 1220], [250, 1801], [341, 986], [341, 1726], [393, 1801], [400, 643], [400, 714], [492, 1220], [492, 1374], [643, 400], [643, 1205], [643, 1220], [714, 400], [858, 1220], [858, 1581], [907, 1801], [986, 74], [986, 341], [986, 1220], [996, 1220], [996, 1910], [1052, 1258], [1177, 1581], [1205, 643], [1220, 250], [1220, 492], [1220, 643], [1220, 858], [1220, 986], [1220, 996], [1220, 1783], [1258, 1052], [1258, 1783], [1374, 26], [1374, 492], [1581, 858], [1581, 1177], [1726, 341], [1749, 1910], [1783, 1220], [1783, 1258], [1801, 250], [1801, 393], [1801, 907], [1910, 996], [1910, 1749]], \"k\": 3, \"n_edges\": 50, \"n_nodes\": 26, \"nodes\": [26, 66, 74, 250, 341, 393, 400, 492, 643, 714, 858, 907, 986, 996, 1052, 1177, 1205, 1220, 1258, 1374, 1581, 1726, 1749, 1783, 1801, 1910], \"truncated\": false}",
+   "latency_ms": 1,
+   "tokens_before": 2329,
+   "tokens_after": 2329,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_03",
+   "tool": "khop_subgraph",
+   "args": {
+    "node": 1612,
+    "k": 3,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "d9309527b2c3945a",
+   "result_summary": "{\"center\": 1612, \"edges\": [[26, 864], [26, 1374], [66, 74], [66, 296], [74, 66], [165, 714], [165, 1612], [296, 66], [296, 1612], [393, 1506], [393, 1801], [400, 714], [444, 1177], [444, 1612], [531, 1612], [531, 1749], [536, 1612], [704, 936], [704, 1853], [714, 165], [714, 400], [864, 26], [864, 1612], [936, 704], [997, 1052], [997, 1612], [1052, 997], [1052, 1258], [1177, 444], [1177, 1581], [1258, 1052], [1374, 26], [1506, 393], [1506, 1612], [1581, 1177], [1612, 165], [1612, 296], [1612, 444], [1612, 531], [1612, 536], [1612, 864], [1612, 997], [1612, 1506], [1612, 1853], [1749, 531], [1749, 1910], [1801, 393], [1853, 704], [1853, 1612], [1910, 1749]], \"k\": 3, \"n_edges\": 50, \"n_nodes\": 26, \"nodes\": [26, 66, 74, 165, 296, 393, 400, 444, 531, 536, 704, 714, 864, 936, 997, 1052, 1177, 1258, 1374, 1506, 1581, 1612, 1749, 1801, 1853, 1910], \"truncated\": false}",
+   "latency_ms": 1,
+   "tokens_before": 4076,
+   "tokens_after": 4076,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_04",
+   "tool": "neighbors",
+   "args": {
+    "node": 1220,
+    "window": [
+     23074,
+     27643
+    ],
+    "direction": "both"
+   },
+   "result_digest": "d8073260c9e90eb2",
+   "result_summary": "{\"direction\": \"both\", \"n_neighbors\": 7, \"neighbors\": [250, 492, 643, 858, 986, 996, 1783], \"node\": 1220, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 6349,
+   "tokens_after": 6349,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_05",
+   "tool": "neighbors",
+   "args": {
+    "node": 1612,
+    "window": [
+     23074,
+     27643
+    ],
+    "direction": "both"
+   },
+   "result_digest": "9bc944bcc753cf2e",
+   "result_summary": "{\"direction\": \"both\", \"n_neighbors\": 9, \"neighbors\": [165, 296, 444, 531, 536, 864, 997, 1506, 1853], \"node\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 8723,
+   "tokens_after": 8723,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_06",
+   "tool": "edges_between",
+   "args": {
+    "u": 1220,
+    "v": 1612,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "6774aa803cb29c20",
+   "result_summary": "{\"connected\": false, \"n_events_u_to_v\": 0, \"n_events_v_to_u\": 0, \"u\": 1220, \"v\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 11205,
+   "tokens_after": 11205,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_07",
+   "tool": "window_event_count",
+   "args": {
+    "windows": [
+     [
+      23074,
+      23673
+     ],
+     [
+      23674,
+      24273
+     ],
+     [
+      24274,
+      24873
+     ],
+     [
+      24874,
+      25473
+     ],
+     [
+      25474,
+      26073
+     ],
+     [
+      26074,
+      26673
+     ],
+     [
+      26674,
+      27273
+     ],
+     [
+      27274,
+      27643
+     ]
+    ],
+    "nodes": [
+     1220,
+     858,
+     1581,
+     1177,
+     444,
+     1612
+    ]
+   },
+   "result_digest": "125c92c6a8a62d5f",
+   "result_summary": "{\"counts\": [{\"n_events\": 3, \"window\": [23074, 23673]}, {\"n_events\": 0, \"window\": [23674, 24273]}, {\"n_events\": 5, \"window\": [24274, 24873]}, {\"n_events\": 2, \"window\": [24874, 25473]}, {\"n_events\": 3, \"window\": [25474, 26073]}, {\"n_events\": 2, \"window\": [26074, 26673]}, {\"n_events\": 1, \"window\": [26674, 27273]}, {\"n_events\": 3, \"window\": [27274, 27643]}]}",
+   "latency_ms": 11,
+   "tokens_before": 13784,
+   "tokens_after": 13784,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_08",
+   "tool": "edges_between",
+   "args": {
+    "u": 1220,
+    "v": 250,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "550dc12c88dea1a9",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 1220, \"v\": 250, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 16612,
+   "tokens_after": 16612,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_09",
+   "tool": "edges_between",
+   "args": {
+    "u": 1220,
+    "v": 492,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "36b9d8a948df5502",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 1220, \"v\": 492, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 16612,
+   "tokens_after": 16612,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_10",
+   "tool": "edges_between",
+   "args": {
+    "u": 1220,
+    "v": 643,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "eb0834f10c63f46c",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 1220, \"v\": 643, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 16612,
+   "tokens_after": 16612,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_11",
+   "tool": "edges_between",
+   "args": {
+    "u": 1220,
+    "v": 858,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "9d43657d843de254",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 1220, \"v\": 858, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 16612,
+   "tokens_after": 16612,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_12",
+   "tool": "edges_between",
+   "args": {
+    "u": 1220,
+    "v": 986,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "1b547b67524ad969",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 1220, \"v\": 986, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 16612,
+   "tokens_after": 16612,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_13",
+   "tool": "edges_between",
+   "args": {
+    "u": 1220,
+    "v": 996,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "30958bef9f259641",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 1220, \"v\": 996, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 16612,
+   "tokens_after": 16612,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_14",
+   "tool": "edges_between",
+   "args": {
+    "u": 1220,
+    "v": 1783,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "14fd790cfee172d1",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 1220, \"v\": 1783, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 16612,
+   "tokens_after": 16612,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_15",
+   "tool": "edges_between",
+   "args": {
+    "u": 165,
+    "v": 1612,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "e755ae27aa83ccac",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 165, \"v\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 20057,
+   "tokens_after": 20057,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_16",
+   "tool": "edges_between",
+   "args": {
+    "u": 296,
+    "v": 1612,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "79717d3cd7444ca7",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 296, \"v\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 20057,
+   "tokens_after": 20057,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_17",
+   "tool": "edges_between",
+   "args": {
+    "u": 444,
+    "v": 1612,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "ee417b1ad110f78d",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 444, \"v\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 20057,
+   "tokens_after": 20057,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_18",
+   "tool": "edges_between",
+   "args": {
+    "u": 531,
+    "v": 1612,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "8522e60ed1ab330e",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 531, \"v\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 20057,
+   "tokens_after": 20057,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_19",
+   "tool": "edges_between",
+   "args": {
+    "u": 536,
+    "v": 1612,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "ad08ee552e2eed37",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 0, \"n_events_v_to_u\": 1, \"u\": 536, \"v\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 20057,
+   "tokens_after": 20057,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_20",
+   "tool": "edges_between",
+   "args": {
+    "u": 864,
+    "v": 1612,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "74444f44c88356e8",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 864, \"v\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 20057,
+   "tokens_after": 20057,
+   "ok": true,
+   "error": ""
+  }
+ ],
+ "final_claim": {
+  "task_id": "t_20982933",
+  "decision": "insufficient",
+  "mechanism": "cascade",
+  "entities": [
+   1220,
+   1612
+  ],
+  "window": [
+   23074,
+   27643
+  ],
+  "confidence": 0.85,
+  "evidence": [
+   {
+    "trace_id": "step_01",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_06",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_07",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_04",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_05",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_02",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_03",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_08",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_09",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_10",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_11",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_12",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_13",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_14",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_15",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_16",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_17",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_18",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_19",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_20",
+    "role": "confounder_control"
+   }
+  ],
+  "narrative": "There is no direct 1220->1612 event in the interval, and while 1220 has outgoing events to several neighbors and those neighbors also contact 1612 (so a static/structural path exists \u2014 steps 02,03,08-14,15-20), the available tools do not provide the individual event timestamps needed to verify a time-respecting chain with successive gaps <=600. Windowed counts and the summary (steps 01,07) show activity but are too coarse to establish the required temporal ordering; neighbor listings (steps 04,05) confirm the path must be indirect. Therefore the temporal evidence is insufficient to conclude a genuine time-respecting cascade."
+ },
+ "raw_final_response": "{\n  \"task_id\": \"t_20982933\",\n  \"decision\": \"insufficient\",\n  \"mechanism\": \"cascade\",\n  \"entities\": [1220, 1612],\n  \"window\": [23074, 27643],\n  \"confidence\": 0.85,\n  \"evidence\": [\n    {\"trace_id\": \"step_01\", \"role\": \"support\"},\n    {\"trace_id\": \"step_06\", \"role\": \"support\"},\n    {\"trace_id\": \"step_07\", \"role\": \"support\"},\n    {\"trace_id\": \"step_04\", \"role\": \"support\"},\n    {\"trace_id\": \"step_05\", \"role\": \"support\"},\n    {\"trace_id\": \"step_02\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_03\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_08\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_09\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_10\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_11\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_12\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_13\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_14\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_15\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_16\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_17\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_18\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_19\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_20\", \"role\": \"confounder_control\"}\n  ],\n  \"narrative\": \"There is no direct 1220->1612 event in the interval, and while 1220 has outgoing events to several neighbors and those neighbors also contact 1612 (so a static/structural path exists \u2014 steps 02,03,08-14,15-20), the available tools do not provide the individual event timestamps needed to verify a time-respecting chain with successive gaps <=600. Windowed counts and the summary (steps 01,07) show activity but are too coarse to establish the required temporal ordering; neighbor listings (steps 04,05) confirm the path must be indirect. Therefore the temporal evidence is insufficient to conclude a genuine time-respecting cascade.\"\n}",
+ "total_input_tokens": 24151,
+ "total_output_tokens": 9112,
+ "total_tokens": 33263,
+ "total_latency_ms": 123150,
+ "llm_calls": 10,
+ "schema_repairs": 0,
+ "status": "success",
+ "error": ""
+}

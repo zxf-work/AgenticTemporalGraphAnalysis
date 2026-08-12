@@ -1,0 +1,111 @@
+{
+ "run_id": "r_4c45383bfffc",
+ "task_id": "t_44f03991",
+ "pair_id": "m1_none_seed000",
+ "world_hash": "c90d234577f5ea70",
+ "agent_condition": "A3",
+ "model": "gpt-5-mini",
+ "prompt_hash": "383168cb5877aafb",
+ "code_commit": "",
+ "tool_budget": 20,
+ "steps": [
+  {
+   "step_id": "step_01",
+   "tool": "temporal_reachability",
+   "args": {
+    "source": 86,
+    "target": 1356,
+    "window": [
+     23269,
+     27907
+    ],
+    "max_wait": 600
+   },
+   "result_digest": "5d36186a17c9da11",
+   "result_summary": "{\"hop_waits\": [345, 171, 370, 152], \"max_wait\": 600, \"max_wait_used\": 370, \"n_nodes_reached\": 12, \"reached\": true, \"route\": [{\"from\": 86, \"t\": 25069, \"to\": 192}, {\"from\": 192, \"t\": 25414, \"to\": 63}, {\"from\": 63, \"t\": 25585, \"to\": 294}, {\"from\": 294, \"t\": 25955, \"to\": 1118}, {\"from\": 1118, \"t\": 26107, \"to\": 1356}], \"source\": 86, \"target\": 1356, \"window\": [23269, 27907]}",
+   "latency_ms": 8,
+   "tokens_before": 1743,
+   "tokens_after": 1743,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_02",
+   "tool": "edges_between",
+   "args": {
+    "u": 86,
+    "v": 1356,
+    "window": [
+     23269,
+     27907
+    ]
+   },
+   "result_digest": "4d66ff82d67d151b",
+   "result_summary": "{\"connected\": false, \"n_events_u_to_v\": 0, \"n_events_v_to_u\": 0, \"u\": 86, \"v\": 1356, \"window\": [23269, 27907]}",
+   "latency_ms": 0,
+   "tokens_before": 3715,
+   "tokens_after": 3715,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_03",
+   "tool": "temporal_paths",
+   "args": {
+    "source": 86,
+    "target": 1356,
+    "window": [
+     23269,
+     27907
+    ],
+    "max_wait": 600,
+    "max_paths": 5
+   },
+   "result_digest": "40e7fc6e5ada561d",
+   "result_summary": "{\"paths\": [[[86, 192, 25069], [192, 63, 25414], [63, 294, 25585], [294, 1118, 25955], [1118, 1356, 26107]]]}",
+   "latency_ms": 8,
+   "tokens_before": 5782,
+   "tokens_after": 5782,
+   "ok": true,
+   "error": ""
+  }
+ ],
+ "final_claim": {
+  "task_id": "t_44f03991",
+  "decision": "present",
+  "mechanism": "cascade",
+  "entities": [
+   86,
+   1356
+  ],
+  "window": [
+   23269,
+   27907
+  ],
+  "confidence": 0.9,
+  "evidence": [
+   {
+    "trace_id": "step_01",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_03",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_02",
+    "role": "confounder_control"
+   }
+  ],
+  "narrative": "There exists a time-respecting route from 86 to 1356 within [23269,27907] with successive hops separated by at most 600 units (86->192 at 25069, 192->63 at 25414, 63->294 at 25585, 294->1118 at 25955, 1118->1356 at 26107), supporting a genuine cascade. A direct static edge between 86 and 1356 is absent, ruling out a trivial direct-contact explanation."
+ },
+ "raw_final_response": "{\n  \"task_id\": \"t_44f03991\",\n  \"decision\": \"present\",\n  \"mechanism\": \"cascade\",\n  \"entities\": [86, 1356],\n  \"window\": [23269, 27907],\n  \"confidence\": 0.9,\n  \"evidence\": [\n    {\"trace_id\": \"step_01\", \"role\": \"support\"},\n    {\"trace_id\": \"step_03\", \"role\": \"support\"},\n    {\"trace_id\": \"step_02\", \"role\": \"confounder_control\"}\n  ],\n  \"narrative\": \"There exists a time-respecting route from 86 to 1356 within [23269,27907] with successive hops separated by at most 600 units (86->192 at 25069, 192->63 at 25414, 63->294 at 25585, 294->1118 at 25955, 1118->1356 at 26107), supporting a genuine cascade. A direct static edge between 86 and 1356 is absent, ruling out a trivial direct-contact explanation.\"\n}",
+ "total_input_tokens": 7964,
+ "total_output_tokens": 1267,
+ "total_tokens": 9231,
+ "total_latency_ms": 17605,
+ "llm_calls": 4,
+ "schema_repairs": 0,
+ "status": "success",
+ "error": ""
+}

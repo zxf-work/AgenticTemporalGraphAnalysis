@@ -1,0 +1,85 @@
+{
+  "code_commit": "",
+  "synced_commit": "f9ffa05",
+  "mech_config_hash": "dcd2997b76c7741b",
+  "n_cells": 5,
+  "n_runs": 10,
+  "models": {
+    "qwen32b": "qwen2.5-32b-instruct-awq"
+  },
+  "concurrency": 8,
+  "cells": [
+    {
+      "mechanism": "closure_wave",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "qwen32b",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "ladder_m2_a3=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "qwen32b",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "ladder_m2_a3=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "qwen32b",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "ladder_m2_a3=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "qwen32b",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "ladder_m2_a3=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "qwen32b",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "ladder_m2_a3=closure_wave",
+      "overrides": []
+    }
+  ],
+  "sweep": "ladder_m2_a3",
+  "axis": "mechanism",
+  "values": [
+    "closure_wave"
+  ],
+  "budgets": [
+    16
+  ],
+  "conditions": [
+    "A3"
+  ],
+  "n_seeds": 5
+}

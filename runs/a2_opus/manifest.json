@@ -1,0 +1,146 @@
+{
+  "code_commit": "",
+  "synced_commit": "6192e69",
+  "mech_config_hash": "dcd2997b76c7741b",
+  "n_cells": 10,
+  "n_runs": 20,
+  "models": {
+    "primary": "claude-opus-5"
+  },
+  "concurrency": 12,
+  "cells": [
+    {
+      "mechanism": "closure_wave",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "primary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m2=closure_wave",
+      "overrides": []
+    }
+  ],
+  "sweep": "a2_m2",
+  "axis": "mechanism",
+  "values": [
+    "closure_wave"
+  ],
+  "budgets": [
+    8,
+    32
+  ],
+  "conditions": [
+    "A2"
+  ],
+  "n_seeds": 5
+}

@@ -1,0 +1,201 @@
+{
+ "run_id": "r_489d81c8a887",
+ "task_id": "t_20982933",
+ "pair_id": "m1_none_seed001",
+ "world_hash": "bebd1c2c83c26822",
+ "agent_condition": "A3",
+ "model": "gpt-5-mini",
+ "prompt_hash": "c0ec12174d5fc356",
+ "code_commit": "",
+ "tool_budget": 20,
+ "steps": [
+  {
+   "step_id": "step_01",
+   "tool": "temporal_reachability",
+   "args": {
+    "source": 1220,
+    "target": 1612,
+    "window": [
+     23074,
+     27643
+    ],
+    "max_wait": 600
+   },
+   "result_digest": "b2845eb3e565f5c2",
+   "result_summary": "{\"hop_waits\": [273, 154, 306, 236], \"max_wait\": 600, \"max_wait_used\": 306, \"n_nodes_reached\": 12, \"reached\": true, \"route\": [{\"from\": 1220, \"t\": 24874, \"to\": 492}, {\"from\": 492, \"t\": 25147, \"to\": 1374}, {\"from\": 1374, \"t\": 25301, \"to\": 26}, {\"from\": 26, \"t\": 25607, \"to\": 864}, {\"from\": 864, \"t\": 25843, \"to\": 1612}], \"source\": 1220, \"target\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 9,
+   "tokens_before": 1744,
+   "tokens_after": 1744,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_02",
+   "tool": "khop_subgraph",
+   "args": {
+    "node": 1220,
+    "k": 4,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "b45a451c6a8c3023",
+   "result_summary": "{\"center\": 1220, \"edges\": [[26, 864], [26, 1374], [66, 74], [66, 296], [74, 66], [74, 986], [151, 1726], [155, 907], [158, 639], [158, 1542], [158, 1726], [165, 714], [250, 1220], [250, 1801], [263, 1726], [296, 66], [341, 986], [341, 1726], [393, 1506], [393, 1801], [400, 643], [400, 714], [444, 1177], [492, 1220], [492, 1374], [531, 1749], [639, 158], [639, 1726], [643, 400], [643, 1205], [643, 1220], [714, 165], [714, 400], [858, 1220], [858, 1581], [864, 26], [907, 155], [907, 1801], [986, 74], [986, 341], [986, 1220], [996, 1220], [996, 1910], [997, 1052], [1051, 1726], [1052, 997], [1052, 1258], [1066, 1726], [1153, 1726], [1177, 444], [1177, 1581], [1205, 643], [1220, 250], [1220, 492], [1220, 643], [1220, 858], [1220, 986], [1220, 996], [1220, 1783], [1258, 1052], [1258, 1783], [1260, 1726], [1295, 1726], [1374, 26], [1374, 492], [1490, 1726], [1506, 393], [1542, 158], [1542, 1726], [1581, 858], [1581, 1177], [1726, 151], [1726, 158], [1726, 263], [1726, 341], [1726, 639], [1726, 1051], [1726, 1066], [1726, 1153], [1726, 1260], [1726, 1295], [1726, 1490], [1726, 1542], [1726, 1892], [1726, 1916], [1749, 531], [1749, 1910], [1783, 1220], [1783, 1258], [1801, 250], [1801, 393], [1801, 907], [1892, 1726], [1910, 996], [1910, 1749], [1916, 1726]], \"k\": 4, \"n_edges\": 96, \"n_nodes\": 47, \"nodes\": [26, 66, 74, 151, 155, 158, 165, 250, 263, 296, 341, 393, 400, 444, 492, 531, 639, 643, 714, 858, 864, 907, 986, 996, 997, 1051, 1052, 1066, 1153, 1177, 1205, 1220, 1258, 1260, 1295, 1374, 1490, 1506, 1542, 1581, 1726, 1749, 1783, 1801, 1892, 1910, 1916], \"truncated\": false}",
+   "latency_ms": 1,
+   "tokens_before": 3720,
+   "tokens_after": 3720,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_03",
+   "tool": "edges_between",
+   "args": {
+    "u": 1220,
+    "v": 492,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "36b9d8a948df5502",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 1220, \"v\": 492, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 6628,
+   "tokens_after": 6628,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_04",
+   "tool": "edges_between",
+   "args": {
+    "u": 492,
+    "v": 1374,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "b8bf182668623008",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 492, \"v\": 1374, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 9631,
+   "tokens_after": 9631,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_05",
+   "tool": "edges_between",
+   "args": {
+    "u": 1374,
+    "v": 26,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "9744599cf8b01391",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 1374, \"v\": 26, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 12729,
+   "tokens_after": 12729,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_06",
+   "tool": "edges_between",
+   "args": {
+    "u": 26,
+    "v": 864,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "75779e5874ad8017",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 26, \"v\": 864, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 15922,
+   "tokens_after": 15922,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_07",
+   "tool": "edges_between",
+   "args": {
+    "u": 864,
+    "v": 1612,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "74444f44c88356e8",
+   "result_summary": "{\"connected\": true, \"n_events_u_to_v\": 1, \"n_events_v_to_u\": 0, \"u\": 864, \"v\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 19208,
+   "tokens_after": 19208,
+   "ok": true,
+   "error": ""
+  }
+ ],
+ "final_claim": {
+  "task_id": "t_20982933",
+  "decision": "present",
+  "mechanism": "cascade",
+  "entities": [
+   1220,
+   1612
+  ],
+  "window": [
+   23074,
+   27643
+  ],
+  "confidence": 0.9,
+  "evidence": [
+   {
+    "trace_id": "step_01",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_03",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_04",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_05",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_06",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_07",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_02",
+    "role": "confounder_control"
+   }
+  ],
+  "narrative": "A time-respecting route from 1220 to 1612 exists within [23074,27643] (step_01) composed of events at 24874, 25147, 25301, 25607, 25843. Each hop was verified as occurring in the window (steps_03\u201307) and all inter-event waits are \u2264600, so a genuine cascade is present. The k-hop static subgraph (step_02) was checked as a confounder (static connectivity alone is insufficient)."
+ },
+ "raw_final_response": "{\n  \"task_id\": \"t_20982933\",\n  \"decision\": \"present\",\n  \"mechanism\": \"cascade\",\n  \"entities\": [1220, 1612],\n  \"window\": [23074, 27643],\n  \"confidence\": 0.90,\n  \"evidence\": [\n    {\"trace_id\": \"step_01\", \"role\": \"support\"},\n    {\"trace_id\": \"step_03\", \"role\": \"support\"},\n    {\"trace_id\": \"step_04\", \"role\": \"support\"},\n    {\"trace_id\": \"step_05\", \"role\": \"support\"},\n    {\"trace_id\": \"step_06\", \"role\": \"support\"},\n    {\"trace_id\": \"step_07\", \"role\": \"support\"},\n    {\"trace_id\": \"step_02\", \"role\": \"confounder_control\"}\n  ],\n  \"narrative\": \"A time-respecting route from 1220 to 1612 exists within [23074,27643] (step_01) composed of events at 24874, 25147, 25301, 25607, 25843. Each hop was verified as occurring in the window (steps_03\u201307) and all inter-event waits are \u2264600, so a genuine cascade is present. The k-hop static subgraph (step_02) was checked as a confounder (static connectivity alone is insufficient).\"\n}",
+ "total_input_tokens": 22589,
+ "total_output_tokens": 1636,
+ "total_tokens": 24225,
+ "total_latency_ms": 27846,
+ "llm_calls": 8,
+ "schema_repairs": 0,
+ "status": "success",
+ "error": ""
+}

@@ -1,0 +1,207 @@
+{
+  "code_commit": "",
+  "synced_commit": "43f2a49",
+  "mech_config_hash": "65132303013ab904",
+  "n_cells": 15,
+  "n_runs": 30,
+  "models": {
+    "secondary": "gpt-5-mini"
+  },
+  "concurrency": 12,
+  "cells": [
+    {
+      "mechanism": "compound",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    },
+    {
+      "mechanism": "compound",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "compound=compound",
+      "overrides": []
+    }
+  ],
+  "sweep": "compound",
+  "axis": "mechanism",
+  "values": [
+    "compound"
+  ],
+  "budgets": [
+    32
+  ],
+  "conditions": [
+    "A1",
+    "A2",
+    "A3"
+  ],
+  "n_seeds": 5
+}

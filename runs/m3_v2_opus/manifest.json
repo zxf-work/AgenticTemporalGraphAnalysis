@@ -1,0 +1,86 @@
+{
+  "code_commit": "",
+  "synced_commit": "6317f3a",
+  "mech_config_hash": "dcd2997b76c7741b",
+  "n_cells": 5,
+  "n_runs": 10,
+  "models": {
+    "primary": "claude-opus-5"
+  },
+  "concurrency": 12,
+  "cells": [
+    {
+      "mechanism": "regime_switch",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "primary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    }
+  ],
+  "sweep": "cross_mechanism",
+  "axis": "mechanism",
+  "values": [
+    "closure_wave",
+    "regime_switch"
+  ],
+  "budgets": [
+    8
+  ],
+  "conditions": [
+    "A1"
+  ],
+  "n_seeds": 5
+}

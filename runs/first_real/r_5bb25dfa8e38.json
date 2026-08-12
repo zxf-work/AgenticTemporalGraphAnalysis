@@ -1,0 +1,259 @@
+{
+ "run_id": "r_5bb25dfa8e38",
+ "task_id": "t_8980b60f",
+ "pair_id": "m1_none_seed001",
+ "world_hash": "88775c11bcb8c3c6",
+ "agent_condition": "A3",
+ "model": "gpt-5-mini",
+ "prompt_hash": "040e0b801eaa8611",
+ "code_commit": "",
+ "tool_budget": 20,
+ "steps": [
+  {
+   "step_id": "step_01",
+   "tool": "temporal_reachability",
+   "args": {
+    "source": 1220,
+    "target": 1612,
+    "window": [
+     23074,
+     27643
+    ],
+    "max_wait": 600
+   },
+   "result_digest": "ba247da8b6a3bdfa",
+   "result_summary": "{\"max_wait\": 600, \"n_nodes_reached\": 8, \"reached\": false, \"source\": 1220, \"target\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 9,
+   "tokens_before": 1746,
+   "tokens_after": 1746,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_02",
+   "tool": "temporal_reachability",
+   "args": {
+    "source": 1220,
+    "target": 1612,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "436d61fe5587579a",
+   "result_summary": "{\"max_wait\": null, \"n_nodes_reached\": 8, \"reached\": false, \"source\": 1220, \"target\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 8,
+   "tokens_before": 3597,
+   "tokens_after": 3597,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_03",
+   "tool": "graph_summary",
+   "args": {
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "139662f8ee081a87",
+   "result_summary": "{\"n_active_nodes\": 493, \"n_distinct_edges\": 383, \"n_events\": 384, \"n_nodes_total\": 2000, \"repeat_ratio\": 0.0026, \"t_max\": 27642, \"t_min\": 23108, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 5547,
+   "tokens_after": 5547,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_04",
+   "tool": "neighbors",
+   "args": {
+    "node": 1220,
+    "window": [
+     23074,
+     27643
+    ],
+    "direction": "out"
+   },
+   "result_digest": "67e04c61a17c0151",
+   "result_summary": "{\"direction\": \"out\", \"n_neighbors\": 7, \"neighbors\": [250, 492, 643, 858, 986, 996, 1783], \"node\": 1220, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 7604,
+   "tokens_after": 7604,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_05",
+   "tool": "neighbors",
+   "args": {
+    "node": 1220,
+    "window": [
+     23074,
+     27643
+    ],
+    "direction": "in"
+   },
+   "result_digest": "29d0f89ff94e69b7",
+   "result_summary": "{\"direction\": \"in\", \"n_neighbors\": 0, \"neighbors\": [], \"node\": 1220, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 9762,
+   "tokens_after": 9762,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_06",
+   "tool": "neighbors",
+   "args": {
+    "node": 1612,
+    "window": [
+     23074,
+     27643
+    ],
+    "direction": "in"
+   },
+   "result_digest": "ea6634b9be897d54",
+   "result_summary": "{\"direction\": \"in\", \"n_neighbors\": 7, \"neighbors\": [165, 296, 444, 531, 864, 997, 1506], \"node\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 12000,
+   "tokens_after": 12000,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_07",
+   "tool": "neighbors",
+   "args": {
+    "node": 1612,
+    "window": [
+     23074,
+     27643
+    ],
+    "direction": "out"
+   },
+   "result_digest": "2ae30d147e5d17bf",
+   "result_summary": "{\"direction\": \"out\", \"n_neighbors\": 2, \"neighbors\": [536, 1853], \"node\": 1612, \"window\": [23074, 27643]}",
+   "latency_ms": 0,
+   "tokens_before": 14339,
+   "tokens_after": 14339,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_08",
+   "tool": "khop_subgraph",
+   "args": {
+    "node": 1220,
+    "k": 3,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "5f205c134bf778ba",
+   "result_summary": "{\"center\": 1220, \"edges\": [[26, 1374], [66, 74], [74, 66], [74, 986], [250, 1220], [250, 1801], [341, 986], [341, 1726], [393, 1801], [400, 643], [400, 714], [492, 1220], [492, 1374], [643, 400], [643, 1205], [643, 1220], [714, 400], [858, 1220], [858, 1581], [907, 1801], [986, 74], [986, 341], [986, 1220], [996, 1220], [996, 1910], [1052, 1258], [1177, 1581], [1205, 643], [1220, 250], [1220, 492], [1220, 643], [1220, 858], [1220, 986], [1220, 996], [1220, 1783], [1258, 1052], [1258, 1783], [1374, 26], [1374, 492], [1581, 858], [1581, 1177], [1726, 341], [1749, 1910], [1783, 1220], [1783, 1258], [1801, 250], [1801, 393], [1801, 907], [1910, 996], [1910, 1749]], \"k\": 3, \"n_edges\": 50, \"n_nodes\": 26, \"nodes\": [26, 66, 74, 250, 341, 393, 400, 492, 643, 714, 858, 907, 986, 996, 1052, 1177, 1205, 1220, 1258, 1374, 1581, 1726, 1749, 1783, 1801, 1910], \"truncated\": false}",
+   "latency_ms": 1,
+   "tokens_before": 16764,
+   "tokens_after": 16764,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_09",
+   "tool": "khop_subgraph",
+   "args": {
+    "node": 1612,
+    "k": 3,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "d9309527b2c3945a",
+   "result_summary": "{\"center\": 1612, \"edges\": [[26, 864], [26, 1374], [66, 74], [66, 296], [74, 66], [165, 714], [165, 1612], [296, 66], [296, 1612], [393, 1506], [393, 1801], [400, 714], [444, 1177], [444, 1612], [531, 1612], [531, 1749], [536, 1612], [704, 936], [704, 1853], [714, 165], [714, 400], [864, 26], [864, 1612], [936, 704], [997, 1052], [997, 1612], [1052, 997], [1052, 1258], [1177, 444], [1177, 1581], [1258, 1052], [1374, 26], [1506, 393], [1506, 1612], [1581, 1177], [1612, 165], [1612, 296], [1612, 444], [1612, 531], [1612, 536], [1612, 864], [1612, 997], [1612, 1506], [1612, 1853], [1749, 531], [1749, 1910], [1801, 393], [1853, 704], [1853, 1612], [1910, 1749]], \"k\": 3, \"n_edges\": 50, \"n_nodes\": 26, \"nodes\": [26, 66, 74, 165, 296, 393, 400, 444, 531, 536, 704, 714, 864, 936, 997, 1052, 1177, 1258, 1374, 1506, 1581, 1612, 1749, 1801, 1853, 1910], \"truncated\": false}",
+   "latency_ms": 1,
+   "tokens_before": 19718,
+   "tokens_after": 19718,
+   "ok": true,
+   "error": ""
+  },
+  {
+   "step_id": "step_10",
+   "tool": "top_active_nodes",
+   "args": {
+    "k": 10,
+    "window": [
+     23074,
+     27643
+    ]
+   },
+   "result_digest": "db633c5b0fca4efa",
+   "result_summary": "{\"top\": [{\"events\": 22, \"node\": 158}, {\"events\": 14, \"node\": 1726}, {\"events\": 10, \"node\": 698}, {\"events\": 10, \"node\": 1688}, {\"events\": 9, \"node\": 319}, {\"events\": 9, \"node\": 1542}, {\"events\": 9, \"node\": 1612}, {\"events\": 8, \"node\": 639}, {\"events\": 7, \"node\": 1220}, {\"events\": 6, \"node\": 595}], \"window\": [23074, 27643]}",
+   "latency_ms": 1,
+   "tokens_before": 23198,
+   "tokens_after": 23198,
+   "ok": true,
+   "error": ""
+  }
+ ],
+ "final_claim": {
+  "task_id": "t_8980b60f",
+  "decision": "absent",
+  "mechanism": "cascade",
+  "entities": [
+   1220,
+   1612
+  ],
+  "window": [
+   23074,
+   27643
+  ],
+  "confidence": 0.9,
+  "evidence": [
+   {
+    "trace_id": "step_01",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_02",
+    "role": "support"
+   },
+   {
+    "trace_id": "step_03",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_10",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_08",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_09",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_04",
+    "role": "confounder_control"
+   },
+   {
+    "trace_id": "step_06",
+    "role": "confounder_control"
+   }
+  ],
+  "narrative": "Temporal reachability queries find no time-respecting route from 1220 to 1612 in [23074,27643], either with a 600-unit max wait (step_01) or with no wait constraint (step_02). Activity volume is substantial (step_03) and both nodes appear among active participants (step_10), and the static k-hop neighborhoods overlap (steps_08 and 09), so a static or popularity-based explanation might suggest connectivity. However the temporal ordering prevents a cascade: immediate out-neighbors of 1220 and in-neighbors of 1612 do not form a time-respecting chain in the window (steps_04, 06), so a cascade is absent."
+ },
+ "raw_final_response": "{\n  \"task_id\": \"t_8980b60f\",\n  \"decision\": \"absent\",\n  \"mechanism\": \"cascade\",\n  \"entities\": [1220, 1612],\n  \"window\": [23074, 27643],\n  \"confidence\": 0.9,\n  \"evidence\": [\n    {\"trace_id\": \"step_01\", \"role\": \"support\"},\n    {\"trace_id\": \"step_02\", \"role\": \"support\"},\n    {\"trace_id\": \"step_03\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_10\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_08\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_09\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_04\", \"role\": \"confounder_control\"},\n    {\"trace_id\": \"step_06\", \"role\": \"confounder_control\"}\n  ],\n  \"narrative\": \"Temporal reachability queries find no time-respecting route from 1220 to 1612 in [23074,27643], either with a 600-unit max wait (step_01) or with no wait constraint (step_02). Activity volume is substantial (step_03) and both nodes appear among active participants (step_10), and the static k-hop neighborhoods overlap (steps_08 and 09), so a static or popularity-based explanation might suggest connectivity. However the temporal ordering prevents a cascade: immediate out-neighbors of 1220 and in-neighbors of 1612 do not form a time-respecting chain in the window (steps_04, 06), so a cascade is absent.\"\n}",
+ "total_input_tokens": 26860,
+ "total_output_tokens": 2884,
+ "total_tokens": 29744,
+ "total_latency_ms": 43696,
+ "llm_calls": 11,
+ "schema_repairs": 0,
+ "status": "success",
+ "error": ""
+}

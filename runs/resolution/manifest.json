@@ -1,0 +1,126 @@
+{
+  "code_commit": "",
+  "n_cells": 4,
+  "n_runs": 8,
+  "models": {
+    "script_a1": "script-a1-bisect"
+  },
+  "concurrency": 12,
+  "cells": [
+    {
+      "mechanism": "cascade",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "script_a1",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "resolution=16",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          6
+        ],
+        [
+          "temporal_resolution",
+          16
+        ]
+      ]
+    },
+    {
+      "mechanism": "cascade",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "script_a1",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "resolution=64",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          6
+        ],
+        [
+          "temporal_resolution",
+          64
+        ]
+      ]
+    },
+    {
+      "mechanism": "cascade",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "script_a1",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "resolution=256",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          6
+        ],
+        [
+          "temporal_resolution",
+          256
+        ]
+      ]
+    },
+    {
+      "mechanism": "cascade",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "script_a1",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "resolution=1024",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          6
+        ],
+        [
+          "temporal_resolution",
+          1024
+        ]
+      ]
+    }
+  ],
+  "sweep": "resolution",
+  "axis": "temporal_resolution",
+  "values": [
+    16,
+    64,
+    256,
+    1024
+  ],
+  "budgets": [
+    8
+  ],
+  "conditions": [
+    "A1"
+  ],
+  "n_seeds": 1
+}

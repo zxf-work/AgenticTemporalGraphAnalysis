@@ -11,9 +11,16 @@ wsdm2027_*.md
 Must-Reference*.md
 figures/*_caption.md
 
+# Run outputs ARE included: every figure and every number in the paper is regenerated from
+# runs/*/results.jsonl and the stored traces, so the artifact would not replay without them.
+# Superseded sweeps are kept under explicit names (…_INVALID_…, …_PRE_AMENDMENT) because the
+# paper states they are retained rather than deleted; the analysis scripts exclude them by name.
+# Console logs and rescore backups are excluded: they are not reproduction artifacts.
+runs/*.log
+runs/**/*.bak-*
+
 # generated
 data/
-runs/
 __pycache__/
 *.pyc
 .DS_Store

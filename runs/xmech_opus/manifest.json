@@ -1,0 +1,144 @@
+{
+  "code_commit": "",
+  "n_cells": 10,
+  "n_runs": 20,
+  "models": {
+    "primary": "claude-opus-5"
+  },
+  "concurrency": 12,
+  "cells": [
+    {
+      "mechanism": "closure_wave",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "closure_wave",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=closure_wave",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "primary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    }
+  ],
+  "sweep": "cross_mechanism",
+  "axis": "mechanism",
+  "values": [
+    "closure_wave",
+    "regime_switch"
+  ],
+  "budgets": [
+    16
+  ],
+  "conditions": [
+    "A3"
+  ],
+  "n_seeds": 5
+}

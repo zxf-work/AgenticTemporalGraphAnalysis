@@ -1,0 +1,179 @@
+{
+  "code_commit": "",
+  "synced_commit": "dbc8834",
+  "mech_config_hash": "dcd2997b76c7741b",
+  "n_cells": 6,
+  "n_runs": 12,
+  "models": {
+    "secondary": "gpt-5-mini"
+  },
+  "concurrency": 1,
+  "cells": [
+    {
+      "mechanism": "cascade",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m1=32",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          0
+        ],
+        [
+          "temporal_resolution",
+          32
+        ]
+      ]
+    },
+    {
+      "mechanism": "cascade",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "secondary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m1=32",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          0
+        ],
+        [
+          "temporal_resolution",
+          32
+        ]
+      ]
+    },
+    {
+      "mechanism": "cascade",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "secondary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m1=32",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          0
+        ],
+        [
+          "temporal_resolution",
+          32
+        ]
+      ]
+    },
+    {
+      "mechanism": "cascade",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m1=32",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          0
+        ],
+        [
+          "temporal_resolution",
+          32
+        ]
+      ]
+    },
+    {
+      "mechanism": "cascade",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A2",
+      "model_slot": "secondary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m1=32",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          0
+        ],
+        [
+          "temporal_resolution",
+          32
+        ]
+      ]
+    },
+    {
+      "mechanism": "cascade",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A3",
+      "model_slot": "secondary",
+      "budget": 16,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "a2_m1=32",
+      "overrides": [
+        [
+          "hops",
+          5
+        ],
+        [
+          "n_decoy_paths",
+          0
+        ],
+        [
+          "temporal_resolution",
+          32
+        ]
+      ]
+    }
+  ],
+  "sweep": "a2_m1",
+  "axis": "temporal_resolution",
+  "values": [
+    32,
+    256,
+    512
+  ],
+  "budgets": [
+    16
+  ],
+  "conditions": [
+    "A1",
+    "A2",
+    "A3"
+  ],
+  "n_seeds": 2
+}
