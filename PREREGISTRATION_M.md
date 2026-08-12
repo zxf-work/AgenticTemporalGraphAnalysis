@@ -1,0 +1,108 @@
+# Preregistration — cross-mechanism scope test
+
+**Committed before any M2/M3 agent episode was run.** The M1 results are complete and frozen in
+`PAPER_CLAIMS.md`. No closure-wave or regime-switch episode exists for any model under any
+interface.
+
+## The question
+
+Every result so far concerns time-respecting cascades. The obvious reviewer objection is that the
+abstraction tradeoff is a peculiarity of temporal reachability. This tests scope, not a new
+hypothesis:
+
+> Does the pattern — primitive interface ⇒ model-dependence and reconstruction effort; semantic
+> interface ⇒ capability compression plus specification errors — recur on mechanisms whose
+> temporal structure is not a path?
+
+## Cells
+
+| Parameter | Value |
+|---|---|
+| mechanisms | **closure_wave (M2), regime_switch (M3)** |
+| generator parameters | each mechanism's declared defaults (see note) |
+| difficulty axis | **tool-call budget B ∈ {8, 32}** for A1; **B = 16** for A3 |
+| conditions | **A1, A3** |
+| models | **Opus 5, gpt-5-mini** |
+| seeds / polarities | 0–4 / both |
+
+**Why budget is the difficulty axis.** R, k and D are cascade-only generator parameters; the M1
+frontier turned out to be *interaction-limited*, so varying interaction budget tests the same
+mechanism of failure directly and is comparable across mechanisms without new generator work.
+A3 runs at a single budget because it was flat across a 16× span change on M1; if it is flat here
+too, one point suffices, and if it is not, that is itself the finding.
+
+Episodes: A1 = 2 mech × 2 budgets × 2 models × 5 seeds × 2 pol = 80 (Opus 40, ≈ $14).
+A3 = 2 mech × 1 budget × 2 models × 5 seeds × 2 pol = 40 (Opus 20, ≈ $7). Opus ≈ $21 of ~$39 left.
+
+## Predicted outcomes and what each would mean
+
+| Pattern | Interpretation |
+|---|---|
+| A3 ≫ A1 for both models on both mechanisms; Opus > mini under A1 | Pattern recurs. Claims stated for temporal analysis generally, with M1 as the quantified case. |
+| A3 ≫ A1 but no Opus/mini gap under A1 | Capability compression holds; the capability-frontier claim stays M1-specific and is reported as such. |
+| A1 ≈ A3 on M2/M3 | The mechanisms are reconstructible cheaply; the tradeoff is cascade-specific. **Finding 2 narrows to M1** and the paper says so. |
+| A3 < 1.00 on M2/M3 | Semantic operators are not uniformly sufficient — a limitation, reported, not hidden. |
+
+Any of these is publishable. The third and fourth weaken us and are pre-committed to.
+
+## Rules
+
+* No new mechanisms, budgets, or seeds added after results are seen.
+* mini runs first; the protocol gate must pass before Opus is admitted.
+* Results update the *scope* sentences of `PAPER_CLAIMS.md`, never its three findings.
+
+## Amendments
+
+**2026-08-11, mid-run, before any Opus episode.** The M3 question text never stated the comparison
+half-window (`bandwidth`) that the gold predicate uses, while M1 states `max_wait` and M2 states
+`delta`. Agents therefore chose their own (observed: 1000, 500, 2000, 200; one used the gold 5000),
+which changes the statistic and produced A3 = 0.00 on M3 for gpt-5-mini.
+
+That is a defect in our task specification, not an agent specification error, and reporting it as
+the latter would have been a false finding. The template now states the half-window, matching the
+other two mechanisms. **All M3 cells are re-run from scratch**; the M3 numbers collected before this
+amendment are discarded, not reinterpreted. M2 is unaffected (its `delta` was always stated) and its
+results stand.
+
+No cells, budgets, seeds, or conditions changed — only the task text was corrected to state a
+constraint it should always have stated.
+
+**Second M3 amendment, 2026-08-11.** After the text fix, agents used the correct half-window
+(5000 in 10/11 calls, parameterisation error 0.80 → 0.05) and M3 A3 was *still* 0.00. Trace
+inspection showed why: positives score peak change 1.00 and negatives up to 0.44, against a gold
+threshold of 0.60 that the task never states. The agent read 0.434 and called it "a pronounced peak
+change indicating an abrupt shift" — a defensible reading. M3 was therefore testing whether the
+agent guessed our cut point.
+
+This is structural, not a wording bug: M1's decision is a binary predicate and M2's is a fraction
+separated 0.9 vs 0.02, so neither is threshold-sensitive. M3's required margin is raised 0.15 → 0.30,
+giving 1.00 vs ≤0.29 — any threshold in (0.3, 0.9) decides identically. Verified 10/10 seeds
+feasible before adopting.
+
+All M3 cells are again re-run from scratch and prior M3 numbers discarded. M1 and M2 are untouched.
+Recording this rather than quietly retuning: two rounds of correction on one mechanism is itself
+worth knowing when judging how much weight M3 can carry.
+
+**Execution note, 2026-08-11 — a discarded run that must not be mistaken for evidence.** The
+second amendment was committed locally but never synced to the compute host before the re-run was
+launched. The remote config still read `required_margin: 0.15`, so the "corrected" re-run
+regenerated byte-identical worlds and produced run ids identical to the ones it was meant to
+supersede (30/30 overlap), at a cost of $11.59. Its results (`runs/m3_opus`, `runs/m3_mini`) are a
+second *sample* of the superseded configuration, not a correction of it, and are discarded on the
+same grounds as the first. They are retained on disk, clearly named, rather than deleted.
+
+Two faults compounded, and neither was visible in the runner's output — it reported `cached=False`
+and billed normally: the stale config left the worlds unchanged, and a fresh output directory
+defeated the resume cache that would otherwise have recognised the duplicates and skipped them.
+The tell was available and free the whole time: run ids are hashed over the world content, so a
+config change intended to change the worlds *must* change the run ids.
+
+Process fixes, both committed before the corrected run: `scripts/remote_run.sh` refuses on a dirty
+tree, syncs, stamps the host with the local HEAD and verifies the stamp before executing anything;
+`scripts/preflight_new_worlds.py` computes the run ids a sweep would produce, diffs them against
+every run id on disk, and refuses to proceed when a supposedly-corrected re-run reproduces existing
+ids. The corrected M3 run below passed that gate at 120 planned / 0 duplicates.
+
+The manifests also recorded an empty `code_commit`, because the sync excludes `.git/` and the host
+has no repository — so commit provenance had never worked for any run in this study. Manifests now
+record the synced commit and a content hash of the generator config actually used.

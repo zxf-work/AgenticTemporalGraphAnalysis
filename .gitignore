@@ -1,10 +1,11 @@
 # --- artifact repo: source and reproducible outputs only ---
 # Internal working documents are deliberately excluded (double-blind + they are not needed
 # to replay the work): reviews, planning, decision logs, daily notes, status reports.
+# Preregistrations ARE included: they are the record that each experiment's cells, models and
+# analysis were declared before its results existed, which the paper cites as a control.
 DECISIONS.md
 PAPER_CLAIMS.md
 RESEARCH_STATUS.md
-PREREGISTRATION*.md
 notes/
 wsdm2027_*.md
 Must-Reference*.md
