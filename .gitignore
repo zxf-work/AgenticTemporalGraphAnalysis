@@ -26,6 +26,9 @@ __pycache__/
 .DS_Store
 **/.DS_Store
 
+# The manuscript is the submission, not the artifact; it is not distributed here.
+paper/
+
 # LaTeX build artifacts
 paper/*.aux
 paper/*.log
