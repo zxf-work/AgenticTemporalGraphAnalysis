@@ -1,0 +1,28 @@
+# --- artifact repo: source and reproducible outputs only ---
+# Internal working documents are deliberately excluded (double-blind + they are not needed
+# to replay the work): reviews, planning, decision logs, daily notes, status reports.
+DECISIONS.md
+PAPER_CLAIMS.md
+RESEARCH_STATUS.md
+PREREGISTRATION*.md
+notes/
+wsdm2027_*.md
+Must-Reference*.md
+figures/*_caption.md
+
+# generated
+data/
+runs/
+__pycache__/
+*.pyc
+.DS_Store
+**/.DS_Store
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.fls
+paper/*.fdb_latexmk

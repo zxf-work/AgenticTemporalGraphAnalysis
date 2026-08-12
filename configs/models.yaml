@@ -1,0 +1,59 @@
+# Subject models. Pinned before the freeze; never changed afterwards (plan §14, taskboard R7).
+# The model that BUILDS this repo is never a subject.
+#
+# Credentials are NOT stored here. Put them on the compute host in ~/.atgp_env (chmod 600):
+#   export ANTHROPIC_API_KEY=...
+#   export OPENAI_API_KEY=...
+# scripts/env.sh sources that file.
+
+defaults:
+  temperature: 0.0          # deterministic where the provider supports it
+  max_output_tokens: 4096
+  tool_budget: 20           # identical across every agent condition — fairness (plan §13)
+  wallclock_timeout_s: 900
+  transport_retries: 1      # retry transport errors only; never retry on content
+  schema_repair_retries: 1  # one repair prompt if the claim JSON is malformed
+
+models:
+  primary:
+    id: claude-opus-5
+    provider: anthropic
+    role: primary subject
+    note: >
+      Strongest available frontier model. Chosen deliberately: the paper's claim is that a
+      *capability* gap survives at the frontier, so a failure on counterfactual pairs is far more
+      informative from the best model available than from a mid-tier one. Costs more wall-clock
+      and tokens across the ~1,700-run core matrix than Sonnet would.
+
+  secondary:
+    id: gpt-5-mini
+    provider: openai
+    role: secondary subject
+    note: >
+      Different provider and model family, so a finding that survives both is not an artifact of
+      one vendor's tool-use style. Reachable from compute-host but NOT from gpu-cluster (see DECISIONS D1).
+
+  # ---------------------------------------------------------------------------------------
+  # Open-weight capability ladder (milestone C4). One family, three sizes, ONE quantization, so
+  # size is the only variable that moves: mixing an fp16 small model with AWQ large ones would
+  # confound scale with precision. Served locally by vLLM on gpu-cluster through an OpenAI-compatible
+  # endpoint, so the agent loop is byte-identical to the hosted subjects.
+  #
+  # `label` is what lands in the trace and in run_id. It pins the exact checkpoint, because
+  # "qwen-14b" is not a reproducible identifier and C4 requires the checkpoint be recorded.
+  # ---------------------------------------------------------------------------------------
+  qwen7b:
+    id: Qwen/Qwen2.5-7B-Instruct-AWQ
+    provider: vllm
+    label: qwen2.5-7b-instruct-awq
+    role: open-weight ladder, small
+  qwen14b:
+    id: Qwen/Qwen2.5-14B-Instruct-AWQ
+    provider: vllm
+    label: qwen2.5-14b-instruct-awq
+    role: open-weight ladder, medium
+  qwen32b:
+    id: Qwen/Qwen2.5-32B-Instruct-AWQ
+    provider: vllm
+    label: qwen2.5-32b-instruct-awq
+    role: open-weight ladder, large

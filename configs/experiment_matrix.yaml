@@ -1,0 +1,194 @@
+# Predeclared experiment grid (pivot addendum §11, §21 Step 4).
+#
+# Frozen BEFORE any sweep is run. Budgets in particular are declared in advance: choosing them
+# after inspecting where an interface fails would manufacture the difficulty threshold the paper
+# claims to measure.
+#
+# Structured sweeps rather than a full Cartesian product — each sweep varies one information axis
+# against budget, holding the others at their centre value. Selected interaction corners are
+# sampled afterwards if time allows.
+
+defaults:
+  scale: dev
+  paraphrase: 1
+  confounders: [none]
+  pairs_per_cell: 5          # 5 seeds -> 10 runs per cell (positive + negative)
+  concurrency: 12
+
+# Interfaces under comparison. A0 is the identifiability control, not a competitor.
+conditions: [A0, A1, A3]
+
+models:
+  llm: [primary]             # claude-opus-5; add `secondary` for the H4 capability sweep
+  reference: [script_a1]     # deterministic reconstruction, no API cost
+
+budgets: [4, 8, 16, 32]      # the quality-at-fixed-budget frontier (Figure 3)
+
+# ---------------------------------------------------------------------------------------
+# Sweeps. Centre values: R = 256, k = 5, D = 6.
+# ---------------------------------------------------------------------------------------
+
+sweeps:
+
+  # Axis 1 — temporal resolution R (distinguishable bins across the focus window).
+  # Prediction: reconstruction cost ~ k * log_W(R); semantic operators ~flat in R.
+  # PREREGISTERED capability-boundary test (see PREREGISTRATION_R.md).
+  #
+  # Values start at 32: R=16 gives a span of 1200 units, shorter than the cascade itself
+  # (750-1950), so the window could not contain the mechanism it is meant to hide. R=2048 is
+  # dropped: R=512 already defeats reconstruction, so a harder cell adds no information.
+  #
+  # AMENDED from the original declaration, which held n_decoy_paths: 6. Two recorded reasons,
+  # both independent of any R result (none had been seen): (a) the ambiguity sweep found D has no
+  # effect on the outcome at R=512 for either model — a negative result, so D is demoted; (b)
+  # D=0 makes these cells byte-identical to the existing Opus anchors at D=0, so the R=512 column
+  # is served from cache instead of being paid for twice.
+  resolution:
+    axis: temporal_resolution
+    values: [32, 128, 512]
+
+    hold: {hops: 5, n_decoy_paths: 0}
+    mechanisms: [cascade]
+    budgets: [16]
+
+  # Axis 2 — number of temporally decisive events k (path length).
+  # Prediction: reconstruction cost grows ~linearly in k; semantic operators ~flat.
+  decisive_events:
+    axis: hops
+    values: [3, 5, 7, 9]
+    hold: {n_decoy_paths: 6, temporal_resolution: 512}
+    mechanisms: [cascade]
+
+  # Axis 3 — candidate ambiguity D (structurally plausible but never-traversable routes).
+  # Preferred over raw graph size: it directly controls how many timestamps an agent must
+  # localise before it can rule the alternatives out.
+  ambiguity:
+    axis: n_decoy_paths
+    values: [0, 4, 16, 64]
+    hold: {hops: 5, temporal_resolution: 512}
+    mechanisms: [cascade]
+
+  # ---------------------------------------------------------------------------------------
+  # PREREGISTERED strong-model anchors (see PREREGISTRATION.md).
+  #
+  # Declared BEFORE the corrected gpt-5-mini sweep was read, so the cells Opus 5 validates
+  # cannot have been chosen for looking favourable. Budget forces a split of labour: the cheap
+  # model buys dense characterisation across the grid, the frontier model buys cross-model
+  # validation at a few fixed points. Those are different scientific jobs, and separating them
+  # is a stronger design than replicating every cell at frontier cost.
+  #
+  # Cells: D in {0, 16, 64} x B=16 x R=512 x hops=5 x {A1, A3} x 5 seeds x 2 polarities
+  #        = 60 episodes. A0 is added at the CENTRE anchor (D=16) only: +10 episodes.
+  # Total 70 Opus 5 episodes, forecast ~$25.
+  anchors:
+    axis: n_decoy_paths
+    values: [0, 16, 64]
+    hold: {hops: 5, temporal_resolution: 512}
+    mechanisms: [cascade]
+    budgets: [16]
+
+  # PREREGISTERED fine bracket (see PREREGISTRATION_R2.md). Locates the boundary that the coarse
+  # sweep placed somewhere in (128, 512]. Same hold values, same budget, same seeds as the coarse
+  # columns, so all six R values form one uniform curve.
+  resolution_fine:
+    axis: temporal_resolution
+    values: [192, 256, 384]
+    hold: {hops: 5, n_decoy_paths: 0}
+    mechanisms: [cascade]
+    budgets: [16]
+
+  # PREREGISTERED cross-mechanism validation (see PREREGISTRATION_M.md).
+  #
+  # `hold` is empty on purpose: R, k and D are cascade-only generator parameters, and the runner
+  # rejects an override that names no parameter of the target mechanism. Each mechanism runs at
+  # its own declared defaults, and the difficulty axis is the tool-call BUDGET, which is
+  # mechanism-agnostic and is exactly the resource the M1 frontier turned out to be limited by.
+  cross_mechanism:
+    axis: mechanism
+    values: [closure_wave, regime_switch]
+    hold: {}
+    budgets: [8, 32]
+
+  # ---------------------------------------------------------------------------------------
+  # PREREGISTERED open-weight capability ladder (milestone C4, see PREREGISTRATION_C4.md).
+  # Cells are copied verbatim from the milestone document and frozen before any open-weight
+  # episode runs. Four sweeps rather than one, because the milestone declares different axes
+  # per mechanism and interface.
+  # ---------------------------------------------------------------------------------------
+  ladder_m1_a1:
+    axis: temporal_resolution
+    values: [32, 128, 256, 512]
+    hold: {hops: 5, n_decoy_paths: 0}
+    mechanisms: [cascade]
+    budgets: [16]
+
+  ladder_m1_a3:
+    axis: temporal_resolution
+    values: [32, 512]
+    hold: {hops: 5, n_decoy_paths: 0}
+    mechanisms: [cascade]
+    budgets: [16]
+
+  ladder_m2_a1:
+    axis: mechanism
+    values: [closure_wave]
+    hold: {}
+    budgets: [8, 32]
+
+  ladder_m2_a3:
+    axis: mechanism
+    values: [closure_wave]
+    hold: {}
+    budgets: [16]
+
+  # ---------------------------------------------------------------------------------------
+  # PREREGISTERED A2 programmable baseline (milestone C3, see PREREGISTRATION_C3.md).
+  # Representative points only -- the milestone's stop rule forbids a full A2 grid. Held at the
+  # same values as the existing A1/A3 columns so A2 drops in beside them without re-running.
+  # ---------------------------------------------------------------------------------------
+  a2_m1:
+    axis: temporal_resolution
+    values: [32, 256, 512]
+    hold: {hops: 5, n_decoy_paths: 0}
+    mechanisms: [cascade]
+    budgets: [16]
+
+  a2_m2:
+    axis: mechanism
+    values: [closure_wave]
+    hold: {}
+    budgets: [8, 32]
+
+  # ---------------------------------------------------------------------------------------
+  # PREREGISTERED compound workload (milestone C5, see PREREGISTRATION_C5.md).
+  # One generous budget on purpose: the failure under test is compositional and must not be
+  # confounded with budget exhaustion.
+  # ---------------------------------------------------------------------------------------
+  compound:
+    axis: mechanism
+    values: [compound]
+    hold: {}
+    budgets: [32]
+
+# ---------------------------------------------------------------------------------------
+# External validity, run only after the information-complexity sweeps are frozen.
+# ---------------------------------------------------------------------------------------
+scale_check:
+  enabled: false
+  n_nodes: [2000, 8000, 64000]
+  hold: {temporal_resolution: 256, hops: 5, n_decoy_paths: 6}
+  budgets: [16]
+  mechanisms: [cascade]
+
+# Run-count accounting (2 runs per cell):
+#   resolution      4 R x 4 B x 3 cond x 5 seeds x 2 = 480
+#   decisive_events 4 k x 4 B x 3 cond x 5 seeds x 2 = 480
+#   ambiguity       4 D x 4 B x 3 cond x 5 seeds x 2 = 480
+#   mechanisms      3 M x 3 B x 3 cond x 5 seeds x 2 = 270
+#   ------------------------------------------------------------
+#   LLM subtotal                                      1710
+#   script_a1 reference over the same cells (free, deterministic, fast)
+#
+# A0 is cheap (it usually concludes quickly) and script_a1 costs no API calls, so the binding
+# cost is A1 and A3 under the primary model: roughly 1140 episodes at 40-180 s, which is about
+# 3-5 hours at concurrency 12.

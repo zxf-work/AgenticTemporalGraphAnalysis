@@ -1,0 +1,107 @@
+# Mechanism and confounder parameters. Tunable on dev seeds 0..4 ONLY; frozen on Aug 18.
+#
+# Every mechanism exposes a statistic in [0, 1] with a threshold and a required margin (R2):
+# the positive world must clear `threshold` by `required_margin`, and the negative world must fall
+# below it by the same amount, so neither sits at the decision boundary.
+
+background:
+  n_nodes_dev: 2000
+  n_nodes_test: 8000
+  events_per_node: 8           # ~64k events at test scale
+  horizon: [0, 100000]
+  directed: true
+  # activity is bursty rather than uniform: a Poisson mixture with heavy-tailed node rates
+  rate_alpha: 1.6              # power-law exponent for per-node activity rates
+  burstiness: 0.6              # 0 = uniform in time, 1 = strongly clustered
+
+m1_cascade:
+  hops: 5                      # path length v0 -> ... -> v5
+  max_wait: 600                # Δ: the largest permitted gap between consecutive hops
+  slack_fraction: [0.25, 0.65] # planted gaps as a fraction of max_wait -> comfortable positives
+  threshold: 0.5
+  required_margin: 0.15
+  # negative construction: permute timestamps among the planted path edges so that at least one
+  # hop violates ordering; reject if the target stays reachable by any other route.
+  min_order_violations: 2
+  # Structural decoys: additional source->target paths that are never time-respecting, identical
+  # in both worlds (tagged as confounder events, so the pair invariant checks their equality).
+  #
+  # Without these the true path is nearly the only static route between the endpoints — a 5-hop
+  # neighbourhood of 6 nodes — so an agent with only windowed tools can localise ~5 timestamps by
+  # bisection and recover the ordering it was not given an operator for. Observed: Opus 5 did
+  # exactly that and scored 1.00 pair accuracy under the static condition. Decoys multiply the
+  # number of edges that would have to be localised, which is what makes the cost asymmetry
+  # between the interfaces real rather than incidental.
+  n_decoy_paths: 6
+  # Temporal resolution R: the number of distinguishable temporal positions across the
+  # observation window, R = span / (max_wait/8). Implemented by widening the window (and scaling
+  # the horizon and background event count to hold density constant), never by quantising
+  # timestamps -- quantisation would collapse inter-hop gaps into ties and destroy the mechanism
+  # at low R rather than making it harder to locate. null = the default 3*max_wait padding.
+  temporal_resolution: null
+
+m2_closure_wave:
+  n_wedges: 40                 # u--v--w structures that later close u--w
+  delta: 800                   # closing edge must arrive within δ of the wedge completing
+  wave_window: 6000            # positives concentrate closures inside this interval
+  threshold: 0.45              # fraction of wedges closing within δ
+  required_margin: 0.15
+  background_closure_rate: 0.1 # ambient δ-closure fraction, so the threshold is not trivially met
+
+m3_regime_switch:
+  group_size: 12               # focal group S
+  old_partners: 15
+  new_partners: 15
+  repeats: 3                   # interactions per (group member, partner) pair
+  # Density matters here. The statistic is a maximum over probe points, so when each partner
+  # appears only once or twice per window, chance absences inflate the turnover measured in the
+  # NEGATIVE world and push it toward the threshold. Repeating each pair makes every partner
+  # reliably present in every window once the events are spread out, which is exactly the
+  # "gradual churn" the negative world is supposed to show.
+  transition_window: 2500      # positives swap neighbourhoods inside this interval
+  bandwidth: 5000              # half-width used by the windowed change statistic
+  threshold: 0.6               # peak 1 - Jaccard(N_before, N_after)
+  # Raised from 0.15. M3 is the only mechanism whose decision depends on a *threshold* rather than
+  # on a binary predicate (M1: reachable or not) or a hugely separated fraction (M2: 0.9 vs 0.02).
+  # At margin 0.15 the negative worlds reached peak 0.44 against a gold cut of 0.6, and an agent
+  # calling 0.44 "abrupt" is making a defensible judgement — the task was then testing whether it
+  # guessed our cut point, not whether it analysed the data. At 0.30 the separation is 1.00 vs
+  # <=0.29, so any reasonable threshold in (0.3, 0.9) decides the same way. 10/10 seeds feasible.
+  required_margin: 0.30
+
+m4_compound:
+  # M4 is a two-stage investigation, not a fourth simple mechanism (C5 stop rule after M3).
+  #   stage 1  closure wave among C, completing at t_c
+  #   stage 2  cascade s->t lying entirely within [t_c, t_c + admissible]
+  # The negative world contains BOTH stages and fails only the dependency between them, so the
+  # conjunctive strategy ("is there a wave? is there a cascade? then yes") is wrong by design.
+  n_triangles: 10
+  delta: 800                   # stage-1 closure bound
+  closure_threshold: 0.45      # fraction of triangles closing within delta
+  hops: 4                      # stage-2 path length
+  max_wait: 600                # stage-2 waiting bound
+  admissible: 4000             # stage 2 must begin within this long after t_c
+  late_offset: 6000            # how far past the admissible interval the negative places stage 2
+  threshold: 0.5               # the predicate is a conjunction; the statistic is 1.0 / 0.0
+  required_margin: 0.5
+
+confounders:
+  none:
+    kind: none
+  c1_global_burst:             # tempts "lots of recent activity => mechanism"
+    kind: global_burst
+    low:  {multiplier: 2.0, width: 4000}
+    high: {multiplier: 6.0, width: 4000}
+  c2_hub_burst:                # tempts "the hub is busy => mechanism"
+    kind: hub_burst
+    low:  {n_hubs: 3, multiplier: 3.0, width: 4000}
+    high: {n_hubs: 3, multiplier: 9.0, width: 4000}
+  c3_repeat_flood:             # tempts "repetition/recency => structural-temporal evidence"
+    kind: repeat_flood
+    low:  {n_edges: 20, repeats: 15, width: 4000}
+    high: {n_edges: 20, repeats: 45, width: 4000}
+
+generation:
+  max_rejection_attempts: 20   # per seed, before declaring the parameters infeasible
+  dev_seeds: [0, 1, 2, 3, 4]
+  test_seeds_per_cell: 10      # 3 mechanisms x 7 confounder conditions x 10 = 210 pairs
