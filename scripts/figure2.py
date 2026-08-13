@@ -95,10 +95,10 @@ ax.plot(a2, [1.0] * len(a2), ls="none", marker="s", ms=7.5, mfc="none", mec=C["A
         zorder=2)
 ax.plot(a3, [1.0] * len(a3), ls="none", marker="^", ms=4.2, color=C["A3"], zorder=3)
 ax.text(29, 1.20, "A2 (squares) and A3 (triangles): both models, 1.00", fontsize=6.6,
-        color=C["A3"], va="center")
+        color="#444444", va="center")
 ax.text(29, 1.12,
         f"A2 at $R{{=}}${','.join(map(str, a2))} · A3 at $R{{=}}${','.join(map(str, a3))}",
-        fontsize=6.6, color=C["A3"], va="center")
+        fontsize=6.6, color="#444444", va="center")
 
 ax.plot(RS, [A[("A1", "claude-opus-5")][R][0] for R in RS], color=C["A1"], lw=1.7, marker="o",
         ms=4.5, zorder=4)

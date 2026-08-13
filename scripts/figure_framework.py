@@ -59,7 +59,8 @@ for i, (title, stage, failure) in enumerate(STAGES):
 ax.text(-0.06, y + 0.31, "user\nintent", ha="right", va="center", fontsize=7, color=MUTE)
 ax.text(x - gap + 0.10, y + 0.31, "final\nanswer", ha="left", va="center", fontsize=7, color=MUTE)
 ax.text(x / 2 - 0.2, y - 0.84,
-        "Final-answer accuracy is measured only at the far right, and is blind to stages 4 and 5.",
+        "Final-answer accuracy is measured only at the far right: it cannot tell which stage"
+        " failed, and misses stage-5 failures when the answer is correct.",
         ha="center", fontsize=7, color=INK)
 ax.set_xlim(-0.95, x - gap + 0.85)
 ax.set_ylim(-0.04, 2.05)
