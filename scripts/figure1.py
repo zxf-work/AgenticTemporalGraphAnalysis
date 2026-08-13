@@ -92,7 +92,7 @@ ax1.set_ylabel("pair accuracy")
 ax1.set_title("(a) perfect answers, absent evidence", loc="left")
 ax1.legend(handles=[Patch(facecolor="#555", edgecolor="#555", label="evidence-valid (EVPairAcc)"),
                     Patch(facecolor="white", edgecolor="#555", hatch="/////",
-                          label="correct, cited evidence does not support it")],
+                          label="correct, without task-consistent cited support")],
            loc="upper left", frameon=False, handlelength=1.5, bbox_to_anchor=(-0.03, 1.05),
            labelspacing=0.35)
 ax1.text(1.0, -0.325, "interface   ·   compound workload M4, $B=32$", ha="center", fontsize=8)
@@ -133,7 +133,8 @@ ax2.set_ylim(-0.75, 3.85)
 ax2.set_yticks([])
 ax2.spines["left"].set_visible(False)
 ax2.set_xlabel("time   ·   gpt-5-mini, A3, seed 0: answer correct, evidence invalid")
-ax2.set_title("(b) the composition happens in prose, not in the query", loc="left")
+ax2.set_title("(b) composition inferred from payload rather than encoded in the query",
+              loc="left")
 
 fig.tight_layout(w_pad=1.4)
 OUT.mkdir(exist_ok=True)

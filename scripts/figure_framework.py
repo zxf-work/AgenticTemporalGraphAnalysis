@@ -33,7 +33,7 @@ RED, GREEN, BLUE = "#C62828", "#2E7D32", "#0072B2"
 # ======================================================================== framework
 STAGES = [
     ("Information\navailable?", "identifiability", "A0: no permitted query\nseparates the pair"),
-    ("Strategy\nformed?", "strategy discovery", "A1: mini never attempts\nreconstruction"),
+    ("Strategy\nformed?", "strategy discovery", "A1: no reconstruction\nstrategy formed"),
     ("Strategy\ncompleted?", "completion", "M1/M2: budget exhausted\nmid-reconstruction"),
     ("Evidence\ninterpreted?", "interpretation", "M3+A3: decisive evidence\nreturned, misinterpreted"),
     ("Cited computation\nestablishes it?", "semantic validity", "M4+A3: correct answer, no\ntask-faithful cited support"),
@@ -115,7 +115,7 @@ for y, closes, col in ((1.4, [2.0, 4.0, 6.0], GREEN), (0.5, [2.0, 6.5, 9.4], RED
 a.text(T0, 2.0, "$\\blacksquare$ wedge complete   $\\bullet$ closing edge", fontsize=6.0,
        color=MUTE, va="top")
 panel(a, "M2 closure wave: do wedges close within $\\delta$?",
-      "$\\delta{=}800$; the negative deals the same closing times across triangles")
+      "$\\delta{=}800$; the negative reassigns the same closing times across triangles")
 
 # --- M3 regime switch: abrupt vs gradual partner turnover
 a = axes[1][0]
