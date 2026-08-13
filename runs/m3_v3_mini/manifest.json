@@ -1,0 +1,147 @@
+{
+  "code_commit": "",
+  "synced_commit": "3e24998",
+  "mech_config_hash": "65132303013ab904",
+  "n_cells": 10,
+  "n_runs": 20,
+  "models": {
+    "secondary": "gpt-5-mini"
+  },
+  "concurrency": 12,
+  "cells": [
+    {
+      "mechanism": "regime_switch",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 0,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 1,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 2,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 3,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 8,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    },
+    {
+      "mechanism": "regime_switch",
+      "seed": 4,
+      "confounder": "none",
+      "condition": "A1",
+      "model_slot": "secondary",
+      "budget": 32,
+      "paraphrase": 1,
+      "scale": "dev",
+      "sweep": "cross_mechanism=regime_switch",
+      "overrides": []
+    }
+  ],
+  "sweep": "cross_mechanism",
+  "axis": "mechanism",
+  "values": [
+    "closure_wave",
+    "regime_switch"
+  ],
+  "budgets": [
+    8,
+    32
+  ],
+  "conditions": [
+    "A1"
+  ],
+  "n_seeds": 5
+}

@@ -18,8 +18,10 @@ MODELS = {"claude-opus-5": "Opus 5", "gpt-5-mini": "gpt-5-mini"}
 #: A1 dark, A2 orange, A3 blue — colourblind-safe
 C = {"A1": "#222222", "A2": "#D55E00", "A3": "#0072B2", "mini": "#8C8C8C"}
 
-#: superseded by a preregistered amendment, or invalidated by the world-collision bug
-SKIP_DIRS = ("m3_mini", "m3_opus")
+#: superseded by a preregistered amendment, or invalidated by the world-collision bug.
+#: m3_v2_* are the second-amendment M3 runs, superseded by the third amendment (theta_3 stated in
+#: the task text; PREREGISTRATION_M.md) whose runs are m3_v3_*.
+SKIP_DIRS = ("m3_mini", "m3_opus", "m3_v2_mini", "m3_v2_opus")
 
 
 def _superseded(d: str, r: dict) -> bool:
