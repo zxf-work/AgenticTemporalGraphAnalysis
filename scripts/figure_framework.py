@@ -35,7 +35,7 @@ STAGES = [
     ("Information\navailable?", "identifiability", "A0: no permitted query\nseparates the pair"),
     ("Strategy\nformed?", "strategy discovery", "A1: no reconstruction\nstrategy formed"),
     ("Strategy\ncompleted?", "completion", "M1/M2: budget exhausted\nmid-reconstruction"),
-    ("Evidence\ninterpreted?", "interpretation", "M3+A3: decisive evidence\nreturned, misinterpreted"),
+    ("Evidence\ninterpreted?", "interpretation", "M3+A3, criterion unstated:\ndecisive score misread"),
     ("Cited computation\nestablishes it?", "semantic validity", "M4+A3: correct answer, no\ntask-faithful cited support"),
 ]
 
