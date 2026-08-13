@@ -27,7 +27,8 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
-from evaluation.error_taxonomy import CONSTRAINT_KEY, _compound_stage2_bound
+from evaluation.error_taxonomy import (CONSTRAINT_KEY, _compound_stage2_anchored,
+                                       _compound_stage2_bound)
 
 #: the operator whose result decides each mechanism's question
 DECIDING_OPS = {"cascade": ("temporal_reachability", "temporal_paths"),
@@ -43,8 +44,13 @@ def _int_eq(got, want) -> bool:
         return False
 
 
-def step_semvalid(step, task, mechanism: str, condition: str) -> bool:
-    """Would this executed step pass the task-constraint check had it been the sole support?"""
+def step_semvalid(step, task, mechanism: str, condition: str,
+                  compound_tc: int | None = None, claim_positive: bool = False) -> bool:
+    """Would this executed step pass the task-constraint check had it been the sole support?
+
+    ``compound_tc``/``claim_positive`` select the anchored claim-sensitive M4 rule, exactly as in
+    `parameterisation_report`; without ``compound_tc`` the width-only proxy applies.
+    """
     if not step.ok:
         return False
     focus = task.focus
@@ -64,8 +70,10 @@ def step_semvalid(step, task, mechanism: str, condition: str) -> bool:
         want, got = focus.get("max_wait"), step.args.get("max_wait")
         if want is not None and (got is None or not _int_eq(got, want)):
             return False
-        if mechanism == "compound" and not _compound_stage2_bound(step, focus):
-            return False
+        if mechanism == "compound":
+            if compound_tc is not None:
+                return _compound_stage2_anchored(step, focus, compound_tc, claim_positive)
+            return _compound_stage2_bound(step, focus)
         return True
     if mechanism == "closure_wave":
         want, got = focus.get("delta"), step.args.get("delta")
@@ -76,8 +84,11 @@ def step_semvalid(step, task, mechanism: str, condition: str) -> bool:
     return False
 
 
-def exec_ev(row: dict, trace, task) -> bool:
+def exec_ev(row: dict, trace, task, compound_tc: int | None = None) -> bool:
     """ExecEV_i for one scored run."""
     correct = (row.get("decision") == "present") == (row.get("polarity") == "positive")
-    return correct and any(step_semvalid(s, task, row["mechanism"], row["condition"])
+    claim_positive = (trace.final_claim or {}).get("decision") == "present"
+    return correct and any(step_semvalid(s, task, row["mechanism"], row["condition"],
+                                         compound_tc=compound_tc,
+                                         claim_positive=claim_positive)
                            for s in trace.steps)

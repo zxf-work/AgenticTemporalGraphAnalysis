@@ -29,7 +29,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from evaluation.score_run import score
-from tasks.lookup import record_for
+from tasks.lookup import compiled_pair, record_for
 from traces.schema import Trace
 
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
@@ -55,12 +55,14 @@ for d in dirs:
             continue
         try:
             trace = Trace.from_dict(json.loads(tp.read_text()))
-            rec = record_for(row, mcfg, xcfg, _pair_cache)
+            cp = compiled_pair(row, mcfg, xcfg, _pair_cache)
+            rec = getattr(cp, row["polarity"])
             if rec.world_hash != trace.world_hash:
                 out.append(row)
                 skipped += 1
                 continue
-            new = score(trace, rec, row["condition"])
+            tc = (cp.compound_tc or {}).get(row["polarity"])
+            new = score(trace, rec, row["condition"], compound_tc=tc)
         except Exception as exc:                                   # noqa: BLE001
             print(f"  ! {d.name}/{row.get('run_id')}: {type(exc).__name__}: {str(exc)[:90]}")
             out.append(row)

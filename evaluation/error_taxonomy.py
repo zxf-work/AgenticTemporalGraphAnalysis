@@ -86,6 +86,36 @@ CONSTRAINT_KEY = {"cascade": "max_wait", "closure_wave": "delta", "regime_switch
                   "compound": "max_wait"}
 
 
+def _compound_stage2_anchored(step: Any, focus: dict[str, Any], t_c: int,
+                              claim_positive: bool) -> bool:
+    """Anchored, claim-sensitive stage-2 test, used when the true ``t_c`` is available.
+
+    The oracle's closure-completion time is computable at scoring time from the world itself
+    (worlds.mechanisms.compound.closure_completion_time), so the checker can verify that a cited
+    stage-2 query is tied to the admissible interval ``[t_c, t_c + admissible]`` rather than
+    merely narrow. The window must lie inside the admissible interval padded by 25% of the lag on
+    each side, matching the slack of the width-only proxy below. For a positive claim, any
+    witness inside such a window lies within the (padded) admissible interval. For an absence
+    claim the window must additionally cover the entire admissible interval, so a negative
+    reachability result establishes absence over all of it.
+    """
+    adm = focus.get("admissible")
+    if adm is None:
+        return True                       # nothing to check against; never accuse by default
+    w = step.args.get("window")
+    if not (isinstance(w, (list, tuple)) and len(w) == 2):
+        return False                      # no window at all == the whole observation period
+    try:
+        lo, hi = int(w[0]), int(w[1])
+    except (TypeError, ValueError):
+        return False
+    pad = int(adm) * 0.25
+    inside = (lo >= t_c - pad) and (hi <= t_c + int(adm) + pad)
+    if claim_positive:
+        return inside
+    return inside and lo <= t_c and hi >= t_c + int(adm)
+
+
 def _compound_stage2_bound(step: Any, focus: dict[str, Any]) -> bool:
     """Did this reachability call bind stage 2 to the *result* of stage 1?
 
@@ -94,12 +124,11 @@ def _compound_stage2_bound(step: Any, focus: dict[str, Any]) -> bool:
     answers a different question — "is there a cascade anywhere?" — which is TRUE in both worlds by
     construction, so a correct final answer on top of it is unsupported by its own evidence.
 
-    ``t_c`` cannot be handed to the checker: it is the answer to stage 1, and putting it in the
-    served focus would give away the task. So this is a deliberate **proxy** — the call must query
-    a strict sub-interval of the observation window, no wider than the admissible lag (with 50%
-    slack for an agent that pads sensibly). It cannot confirm the interval was placed at the *right*
-    t_c, only that the agent narrowed to something of the right shape rather than searching
-    globally. Stated as a limitation rather than presented as a proof of correct composition.
+    ``t_c`` is never in the served focus (computing it is the compositional step under test), so
+    this width-only **proxy** is what a caller without scoring-time world access can check: the
+    call must query a strict sub-interval of the observation window, no wider than the admissible
+    lag (with 50% slack for an agent that pads sensibly). Reported metrics use the anchored rule
+    above, which recomputes the true t_c from the world at scoring time.
     """
     w = step.args.get("window")
     fwin = focus.get("window") or []
@@ -166,12 +195,24 @@ def _a2_constraint_report(trace: Trace, task: Task, mechanism: str) -> ParamRepo
     return rep
 
 
-def parameterisation_report(trace: Trace, task: Task, mechanism: str) -> ParamReport:
-    """Check every temporal-operator call in a trace against what the task actually asked."""
+def parameterisation_report(trace: Trace, task: Task, mechanism: str,
+                            compound_tc: int | None = None) -> ParamReport:
+    """Check every temporal-operator call in a trace against what the task actually asked.
+
+    ``compound_tc`` is the oracle closure-completion time for this world. When provided, M4
+    stage-2 citations are judged by the anchored claim-sensitive rule; otherwise the width-only
+    proxy applies.
+    """
     if trace.agent_condition == "A2":
         return _a2_constraint_report(trace, task, mechanism)
     rep = ParamReport()
     focus = task.focus
+    claim_positive = (trace.final_claim or {}).get("decision") == "present"
+
+    def stage2_ok(step: Any) -> bool:
+        if compound_tc is not None:
+            return _compound_stage2_anchored(step, focus, compound_tc, claim_positive)
+        return _compound_stage2_bound(step, focus)
     fwin = tuple(focus.get("window") or task.horizon)
     cited_support = {e["trace_id"] for e in (trace.final_claim or {}).get("evidence", [])
                      if e.get("role") == "support"}
@@ -192,7 +233,7 @@ def parameterisation_report(trace: Trace, task: Task, mechanism: str) -> ParamRe
         if mechanism == "compound" and step.tool in ("temporal_reachability", "temporal_paths"):
             if step.step_id in cited_support:
                 stage2_cited_any = True
-                stage2_cited_bound |= _compound_stage2_bound(step, focus)
+                stage2_cited_bound |= stage2_ok(step)
 
         # -- scope: the queried window must cover the interval under investigation
         w = step.args.get("window")
@@ -235,7 +276,7 @@ def parameterisation_report(trace: Trace, task: Task, mechanism: str) -> ParamRe
             # The compositional conjunct. Counted per call so the *rate* of unbound stage-2
             # queries stays visible, but phrased so it does not itself set cited_bad_support --
             # that verdict is made once, after the loop, over all cited calls together.
-            if not _compound_stage2_bound(step, focus):
+            if not stage2_ok(step):
                 rep.missing_constraint += 1
                 bad.append("unbound stage-2 window "
                            f"{step.args.get('window')} (admissible length "

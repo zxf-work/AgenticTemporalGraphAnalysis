@@ -18,9 +18,12 @@ from tasks.schema import TaskRecord
 from traces.schema import Trace
 
 
-def score(trace: Trace, rec: TaskRecord, condition: str) -> RunRow:
+def score(trace: Trace, rec: TaskRecord, condition: str,
+          compound_tc: int | None = None) -> RunRow:
+    """``compound_tc`` is the oracle closure-completion time for this world (compound only);
+    when provided, M4 evidence citations are judged by the anchored claim-sensitive rule."""
     res = check(trace, rec.gold, condition=condition, horizon=rec.task.horizon)
-    par = parameterisation_report(trace, rec.task, rec.mechanism)
+    par = parameterisation_report(trace, rec.task, rec.mechanism, compound_tc=compound_tc)
     rec_stats = reconstruction_stats(trace)
     cat = classify(trace, rec.task, rec.mechanism, res.decision_correct, res.evidence_grounded)
 

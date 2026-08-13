@@ -28,8 +28,8 @@ from worlds.invariants import InvariantRecord, check_pair, static_view_fingerpri
 from worlds.mechanisms.cascade import (cascade_global_check, cascade_gold, generate_cascade_pair)
 from worlds.mechanisms.closure_wave import (closure_global_check, closure_gold,
                                             generate_closure_pair)
-from worlds.mechanisms.compound import (compound_global_check, compound_gold,
-                                        generate_compound_pair)
+from worlds.mechanisms.compound import (closure_completion_time, compound_global_check,
+                                        compound_gold, generate_compound_pair)
 from worlds.mechanisms.regime_switch import (generate_regime_pair, regime_global_check,
                                              regime_gold)
 
@@ -47,6 +47,10 @@ class CompiledPair:
     positive: TaskRecord
     negative: TaskRecord
     invariants: InvariantRecord
+    # Ground-truth closure-completion time per polarity, compound only. Never served to the
+    # agent; consumed by the M4 evidence checker, which verifies that a cited stage-2 query is
+    # anchored at the true t_c rather than merely narrow (evaluation/error_taxonomy.py).
+    compound_tc: dict[str, int] | None = None
 
 
 def _focus_for(mechanism: str, spec: Any) -> dict[str, Any]:
@@ -160,8 +164,17 @@ def compile_pair(cfg: dict[str, Any], mechanism: str, seed: int, *, confounder: 
         (root / "invariants" / f"{pair_id}.json").write_text(
             json.dumps(inv.to_dict(), indent=2))
 
+    compound_tc = None
+    if mechanism == "compound":
+        compound_tc = {}
+        for polarity, world in (("positive", pos_w), ("negative", neg_w)):
+            tc = closure_completion_time(world, group=spec.group, window=tuple(spec.window),
+                                         delta=spec.delta)
+            if tc is not None:
+                compound_tc[polarity] = int(tc)
+
     return CompiledPair(pair_id=pair_id, positive=records["positive"],
-                        negative=records["negative"], invariants=inv)
+                        negative=records["negative"], invariants=inv, compound_tc=compound_tc)
 
 
 def load_world(rel_path: str) -> TemporalWorld:

@@ -143,7 +143,7 @@ rule("4c. EXECUTED-SUPPORT ROBUSTNESS (ExecEVPairAcc, headline cells)")
 # and recompiles pairs like scripts/rescore.py; rows whose world no longer matches are skipped.
 import yaml                                                                     # noqa: E402
 from evaluation.exec_support import exec_ev                                     # noqa: E402
-from tasks.lookup import record_for                                             # noqa: E402
+from tasks.lookup import compiled_pair                                          # noqa: E402
 from traces.schema import Trace                                                 # noqa: E402
 
 _mcfg = yaml.safe_load((ROOT / "configs/mechanisms.yaml").read_text())
@@ -161,15 +161,18 @@ def _exec_paired(sel: list[dict]) -> tuple[float, float, int, int]:
             skipped += 1
             continue
         trace = Trace.from_dict(json.loads(tp.read_text()))
-        rec = record_for(r, _mcfg, _xcfg, _pair_cache)
+        cp = compiled_pair(r, _mcfg, _xcfg, _pair_cache)
+        rec = getattr(cp, r["polarity"])
         if rec.world_hash != trace.world_hash:
             skipped += 1
             continue
-        by[r["pair_id"]][r["polarity"]] = (r, trace, rec.task)
+        tc = (cp.compound_tc or {}).get(r["polarity"])
+        by[r["pair_id"]][r["polarity"]] = (r, trace, rec.task, tc)
     complete = [by[k] for k in sorted(by) if len(by[k]) == 2]
     if not complete:
         return 0.0, 0.0, 0, skipped
-    xok = sum(exec_ev(*v["positive"]) and exec_ev(*v["negative"]) for v in complete)
+    xok = sum(exec_ev(*v["positive"][:3], compound_tc=v["positive"][3])
+              and exec_ev(*v["negative"][:3], compound_tc=v["negative"][3]) for v in complete)
     evok = sum(ev_valid(v["positive"][0]) and ev_valid(v["negative"][0]) for v in complete)
     return xok / len(complete), evok / len(complete), len(complete), skipped
 
