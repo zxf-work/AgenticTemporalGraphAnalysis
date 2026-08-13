@@ -119,7 +119,9 @@ The group of nodes {nodes_preview} is under review. Determine whether this group
 abrupt change of interaction partners during [{w0}, {w1}] — an old set of contacts giving way to
 a new set within a short transition — rather than gradual background turnover spread across the
 period. Compare the group's contacts before and after a candidate change point using a half-window
-of {bandwidth} time units on each side.
+of {bandwidth} time units on each side. Judge the change as abrupt exactly when the peak
+dissimilarity between the before and after contact sets — 1 minus their Jaccard overlap, maximized
+over candidate change points — is at least {threshold}.
 
 {caution}
 
@@ -134,7 +136,9 @@ For the accounts {nodes_preview}, decide whether their circle of contacts was re
 some point in [{w0}, {w1}], or whether their contacts drifted gradually over the whole period.
 Compare the contacts in the {bandwidth} time units before a candidate change point against the
 {bandwidth} time units after it. Both patterns can end with the same final set of contacts, so the
-distinction is about timing.
+distinction is about timing. Call the replacement abrupt exactly when the peak dissimilarity
+between the before and after contact sets — 1 minus their Jaccard overlap, maximized over
+candidate change points — reaches at least {threshold}.
 
 {caution}
 
@@ -211,6 +215,7 @@ def render(mechanism: str, paraphrase: int, *, task_id: str, focus: dict,
         task_id=task_id, source=focus.get("source"), target=focus.get("target"),
         max_wait=focus.get("max_wait"), delta=focus.get("delta"),
         bandwidth=focus.get("bandwidth"), admissible=focus.get("admissible"),
+        threshold=focus.get("threshold"),
         nodes_preview=f"[{preview}]", w0=window[0], w1=window[1], caution=CAUTION,
         decision_block=DECISION_BLOCK.format(mechanism=mechanism),
     ).strip()

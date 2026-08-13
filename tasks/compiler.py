@@ -65,7 +65,7 @@ def _focus_for(mechanism: str, spec: Any) -> dict[str, Any]:
     if mechanism == "regime_switch":
         # the focal group is told; the old/new partner sets and the change point are not
         return {"group": [int(n) for n in spec.group], "window": win,
-                "bandwidth": int(spec.bandwidth)}
+                "bandwidth": int(spec.bandwidth), "threshold": float(spec.threshold)}
     if mechanism == "compound":
         # Everything the agent legitimately needs to run BOTH stages and bind them: the group and
         # closure bound for stage 1, the endpoints and waiting bound for stage 2, and the

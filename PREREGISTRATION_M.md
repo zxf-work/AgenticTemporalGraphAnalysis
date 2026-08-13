@@ -106,3 +106,21 @@ ids. The corrected M3 run below passed that gate at 120 planned / 0 duplicates.
 The manifests also recorded an empty `code_commit`, because the sync excludes `.git/` and the host
 has no repository — so commit provenance had never worked for any run in this study. Manifests now
 record the synced commit and a content hash of the generator config actually used.
+
+**Third M3 amendment, 2026-08-13.** The served task text now states the decision threshold
+explicitly: "judge the change as abrupt exactly when the peak dissimilarity ... is at least 0.6"
+(`tasks/templates.py`, both paraphrases; `threshold` added to the regime_switch focus in
+`tasks/schema.py` / `tasks/compiler.py`). Rationale: the pre-submission review observed that with
+θ3 absent from the question, an M3 misclassification could partly reflect underspecified intent
+rather than evidence interpretation. The second amendment's margin (1.00 vs ≤0.29) already made
+every cutoff in (0.3, 0.9) decide identically, so exposing θ3 changes no gold label and no world;
+it removes the residual ambiguity about what the agent was asked.
+
+Declared before the re-run, outcome-independent: ALL M3 cells (A1 at B=8 and B=32, A3 at B=16,
+both principal models, five seeds, same worlds — world generation is untouched by the prompt
+change, so world hashes are unchanged) are re-run under the amended text into `runs/m3_v3_opus`
+and `runs/m3_v3_mini`. The v2 results are superseded and excluded from analysis on the day the v3
+runs complete, whatever the v3 outcome: if the interpretation failure persists, M3 isolates
+evidence interpretation with the decision criterion fully specified; if it disappears, the prior
+M3 failure is attributable to the unstated cutoff, and the paper's M3 section is rewritten to say
+exactly that. Either outcome is reported.

@@ -71,7 +71,9 @@ class Task:
 ALLOWED_FOCUS_KEYS = {
     "cascade": {"source", "target", "window", "max_wait"},
     "closure_wave": {"nodes", "window", "delta"},
-    "regime_switch": {"group", "window", "bandwidth"},
+    # threshold added by the third M3 amendment: the decision cut is task specification, not gold,
+    # and the served question states it explicitly.
+    "regime_switch": {"group", "window", "bandwidth", "threshold"},
 }
 _ANY_FOCUS_KEY = set().union(*ALLOWED_FOCUS_KEYS.values())
 
