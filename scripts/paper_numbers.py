@@ -137,6 +137,55 @@ for mech, sweeps in HEAD.items():
         pa, ev, n, bits = paired(sel)
         print(f"   {mech:<14}{MODELS[m]:<12} pair={pa:.2f} ev={ev:.2f} gap={pa - ev:.2f} n={n}")
 
+rule("4c. EXECUTED-SUPPORT ROBUSTNESS (ExecEVPairAcc, headline cells)")
+# Final readiness review §5: recompute the evidence criterion over ALL executed steps, cited or
+# not, to separate citation omission from absence of a task-faithful computation. Loads traces
+# and recompiles pairs like scripts/rescore.py; rows whose world no longer matches are skipped.
+import yaml                                                                     # noqa: E402
+from evaluation.exec_support import exec_ev                                     # noqa: E402
+from tasks.lookup import record_for                                             # noqa: E402
+from traces.schema import Trace                                                 # noqa: E402
+
+_mcfg = yaml.safe_load((ROOT / "configs/mechanisms.yaml").read_text())
+_xcfg = yaml.safe_load((ROOT / "configs/experiment_matrix.yaml").read_text())
+_pair_cache: dict = {}
+
+
+def _exec_paired(sel: list[dict]) -> tuple[float, float, int, int]:
+    """(ExecEVPairAcc, EVPairAcc, n_pairs, n_skipped) over one cell's rows."""
+    from collections import defaultdict as _dd
+    by, skipped = _dd(dict), 0
+    for r in sel:
+        tp = ROOT / "runs" / r["_dir"] / "traces" / f"{r.get('run_id', '')}.json"
+        if not tp.exists():
+            skipped += 1
+            continue
+        trace = Trace.from_dict(json.loads(tp.read_text()))
+        rec = record_for(r, _mcfg, _xcfg, _pair_cache)
+        if rec.world_hash != trace.world_hash:
+            skipped += 1
+            continue
+        by[r["pair_id"]][r["polarity"]] = (r, trace, rec.task)
+    complete = [by[k] for k in sorted(by) if len(by[k]) == 2]
+    if not complete:
+        return 0.0, 0.0, 0, skipped
+    xok = sum(exec_ev(*v["positive"]) and exec_ev(*v["negative"]) for v in complete)
+    evok = sum(ev_valid(v["positive"][0]) and ev_valid(v["negative"][0]) for v in complete)
+    return xok / len(complete), evok / len(complete), len(complete), skipped
+
+
+for mech, sweeps in HEAD.items():
+    for cond in (("A2", "A3") if mech == "compound" else ("A3",)):
+        for m in MODELS:
+            sel = [r for r in rows if r["mechanism"] == mech and r["condition"] == cond
+                   and r["model"] == m and r.get("sweep") in sweeps
+                   and r.get("confounder", "none") == "none" and r.get("scale", "dev") == "dev"]
+            if not sel:
+                continue
+            xev, ev, n, sk = _exec_paired(sel)
+            print(f"   {mech:<14}{cond} {MODELS[m]:<12} execEV={xev:.2f} citedEV={ev:.2f} "
+                  f"n={n}" + (f" SKIPPED={sk}" if sk else ""))
+
 rule("5. OPEN-WEIGHT LADDER")
 lad = defaultdict(list)
 for r in rows:
