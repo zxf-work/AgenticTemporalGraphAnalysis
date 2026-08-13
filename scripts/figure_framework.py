@@ -35,8 +35,8 @@ STAGES = [
     ("Information\navailable?", "identifiability", "A0: no permitted query\nseparates the pair"),
     ("Strategy\nformed?", "strategy discovery", "A1: mini never attempts\nreconstruction"),
     ("Strategy\ncompleted?", "completion", "M1/M2: budget exhausted\nmid-reconstruction"),
-    ("Evidence\ninterpreted?", "interpretation", "M3: decisive evidence\nreturned, misinterpreted"),
-    ("Cited computation\nestablishes it?", "semantic validity", "M4: PairAcc 1.00,\nEVPairAcc 0.00"),
+    ("Evidence\ninterpreted?", "interpretation", "M3+A3: decisive evidence\nreturned, misinterpreted"),
+    ("Cited computation\nestablishes it?", "semantic validity", "M4+A3: correct answer, no\ntask-faithful cited support"),
 ]
 
 fig, ax = plt.subplots(figsize=(7.2, 2.35))
