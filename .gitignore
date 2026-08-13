@@ -37,3 +37,4 @@ paper/*.bbl
 paper/*.blg
 paper/*.fls
 paper/*.fdb_latexmk
+HANDOFF.md
