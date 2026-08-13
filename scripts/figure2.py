@@ -86,17 +86,19 @@ import matplotlib.pyplot as plt
 plt.rcParams.update(rc_params())
 fig, (ax, axr) = plt.subplots(1, 2, figsize=(7.2, 2.75), sharex=True)
 
-# A2 and A3 are 1.00 for BOTH models at every R where they were run: four series that plot as one
-# line, so they are drawn once as a band whose label names its own coverage rather than implying
-# points that were never measured.
-tested = sorted({R for c in ("A2", "A3") for m in MODELS for R in A.get((c, m), {})})
-ax.plot([min(tested), max(tested)], [1.0, 1.0], color=C["A3"], lw=6, alpha=0.22,
-        solid_capstyle="butt", zorder=1)
-for R in tested:
-    ax.plot([R], [1.0], marker="|", ms=7, color=C["A3"], mew=1.4, alpha=0.9, zorder=2)
-ax.text(29, 1.20, "A2 and A3: both models, 1.00", fontsize=6.6, color=C["A3"], va="center")
-ax.text(29, 1.12, f"at every $R$ run ({', '.join(str(r) for r in tested)})", fontsize=6.6,
+# A2 and A3 are 1.00 for BOTH models at every R where each was run, but they were run at
+# DIFFERENT R values, so they are drawn as separate marker series (no connecting band, which
+# would imply points that were never measured).
+a2 = sorted({R for m in MODELS for R in A.get(("A2", m), {})})
+a3 = sorted({R for m in MODELS for R in A.get(("A3", m), {})})
+ax.plot(a2, [1.0] * len(a2), ls="none", marker="s", ms=7.5, mfc="none", mec=C["A2"], mew=1.2,
+        zorder=2)
+ax.plot(a3, [1.0] * len(a3), ls="none", marker="^", ms=4.2, color=C["A3"], zorder=3)
+ax.text(29, 1.20, "A2 (squares) and A3 (triangles): both models, 1.00", fontsize=6.6,
         color=C["A3"], va="center")
+ax.text(29, 1.12,
+        f"A2 at $R{{=}}${','.join(map(str, a2))} · A3 at $R{{=}}${','.join(map(str, a3))}",
+        fontsize=6.6, color=C["A3"], va="center")
 
 ax.plot(RS, [A[("A1", "claude-opus-5")][R][0] for R in RS], color=C["A1"], lw=1.7, marker="o",
         ms=4.5, zorder=4)

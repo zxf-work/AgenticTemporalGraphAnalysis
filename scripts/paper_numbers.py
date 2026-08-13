@@ -54,8 +54,11 @@ print("\nOpus A1 per-seed and reconstruction rate:")
 recon = defaultdict(list)
 for r in rows:
     name, _, val = (r.get("sweep") or "").partition("=")
+    # baseline condition only -- the robustness cells reuse the `resolution` sweep name at
+    # R=128, and pair_id does not encode scale, so they merge into this cell otherwise
     if (name in ("resolution", "resolution_fine") and r["condition"] == "A1"
-            and r["model"] == "claude-opus-5" and r.get("budget") == 16):
+            and r["model"] == "claude-opus-5" and r.get("budget") == 16
+            and r.get("confounder", "none") == "none" and r.get("scale", "dev") == "dev"):
         recon[int(val)].append(bool(r.get("used_reconstruction")))
 d = A[("A1", "claude-opus-5")]
 prev = None
@@ -68,7 +71,8 @@ for R in RS:
 print("mini A1 reconstruction rate (all R pooled):", end=" ")
 mr = [bool(r.get("used_reconstruction")) for r in rows
       if (r.get("sweep") or "").startswith(("resolution=", "resolution_fine="))
-      and r["condition"] == "A1" and r["model"] == "gpt-5-mini"]
+      and r["condition"] == "A1" and r["model"] == "gpt-5-mini"
+      and r.get("confounder", "none") == "none" and r.get("scale", "dev") == "dev"]
 print(f"{sum(mr) / len(mr):.2f}" if mr else "n/a")
 
 rule("2. M2 CLOSURE WAVE / M3 REGIME SWITCH (budget axis)")
@@ -190,3 +194,24 @@ for r in a0:
 for m, v in sorted(g.items()):
     pa, ev, n, _ = paired(v)
     print(f"   {MODELS.get(m, m):<12} pairAcc={pa:.2f} over n={n} pairs ({len(v)} runs)")
+
+rule("8. ROBUSTNESS CELLS (M1, R=128, B=16)")
+# The robustness table in the paper. Cells are split by (confounder, scale) BEFORE pairing,
+# because the robustness sweeps reuse `resolution=128` pair_ids (see the guard comments above).
+g = defaultdict(list)
+for r in rows:
+    name, _, val = (r.get("sweep") or "").partition("=")
+    if (name in ("resolution", "resolution_fine") and val == "128"
+            and r["condition"] in ("A1", "A3") and r["model"] in MODELS):
+        cond = (r.get("confounder", "none"), r.get("scale", "dev"))
+        g[(cond, r["condition"], r["model"])].append(r)
+LABEL = {("none", "dev"): "baseline", ("c1_global_burst_high", "dev"): "+confounder",
+         ("none", "test"): "+scale (8K)"}
+for key in sorted(g, key=str):
+    v = g[key]
+    pa, ev, n, bits = paired(v)
+    rr = sum(bool(r.get("used_reconstruction")) for r in v) / len(v)
+    calls = sum(r.get("tool_calls", 0) or 0 for r in v) / len(v)
+    (conf_scale, cond, m) = key
+    print(f"   {LABEL.get(conf_scale, str(conf_scale)):<13}{cond:<4}{MODELS[m]:<12} "
+          f"pair={pa:.2f} recon={rr:.2f} calls={calls:>4.1f} n={n} {bits}")
