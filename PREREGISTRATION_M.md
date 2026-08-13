@@ -124,3 +124,10 @@ runs complete, whatever the v3 outcome: if the interpretation failure persists, 
 evidence interpretation with the decision criterion fully specified; if it disappears, the prior
 M3 failure is attributable to the unstated cutoff, and the paper's M3 section is rewritten to say
 exactly that. Either outcome is reported.
+
+**Decision record, 2026-08-13 (after the v3 results).** The v3 outcome was the "failure
+disappears" branch declared above. Per that branch, and confirmed by the study owner, the paper's
+M3 section reports the v3 cells as the M3 result and the v2 configuration as a labeled task-text
+ablation (identical worlds, operator and parameters; only the presence of the stated θ3 differs).
+The v2 numbers feed no headline metric; they appear solely as the ablation contrast that
+attributes the earlier misclassifications to the unstated decision criterion.
