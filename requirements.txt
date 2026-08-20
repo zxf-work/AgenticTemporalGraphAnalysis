@@ -1,0 +1,9 @@
+# Analysis and figures (everything in README "Reproducing the paper") needs only these three.
+numpy>=1.26
+matplotlib>=3.8
+pyyaml>=6.0
+
+# Needed only to run NEW episodes with scripts/run_matrix.py:
+#   anthropic>=0.40    (Anthropic-served subjects)
+#   openai>=1.40       (OpenAI-served subjects and local OpenAI-compatible endpoints)
+#   vllm               (serving the open-weight ladder; see scripts/ladder_job.sbatch)

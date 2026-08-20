@@ -39,3 +39,6 @@ paper/*.blg
 paper/*.fls
 paper/*.fdb_latexmk
 HANDOFF.md
+
+# never ship ad-hoc archives
+*.zip

@@ -1,8 +1,10 @@
 #!/bin/bash
 # Short shakedown job: start vLLM for one checkpoint, verify tool calling, run 2 real episodes.
-#SBATCH --account=devs
-#SBATCH --partition=bigTiger
-#SBATCH --gres=gpu:h100_80gb:1
+# Site-specific: set your own account/partition/gres. The ladder was served on one
+# H100 80GB per checkpoint.
+#SBATCH --account=YOUR_ACCOUNT
+#SBATCH --partition=YOUR_GPU_PARTITION
+#SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=00:40:00

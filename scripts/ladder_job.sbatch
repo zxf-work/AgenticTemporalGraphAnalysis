@@ -6,9 +6,11 @@
 # One job = one model = one vLLM server + the four preregistered sweeps. Serving and running in
 # the same job keeps the endpoint private to this job (no port collisions between concurrent
 # checkpoints) and means the GPU is released the moment the sweeps finish.
-#SBATCH --account=devs
-#SBATCH --partition=bigTiger
-#SBATCH --gres=gpu:h100_80gb:1
+# Site-specific: set your own account/partition/gres. The ladder was served on one
+# H100 80GB per checkpoint.
+#SBATCH --account=YOUR_ACCOUNT
+#SBATCH --partition=YOUR_GPU_PARTITION
+#SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=96G
 #SBATCH --time=08:00:00
