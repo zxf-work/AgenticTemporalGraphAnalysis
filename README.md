@@ -18,7 +18,7 @@ that does not use the decisive temporal evidence cannot separate the two worlds.
 
 ```
 configs/           mechanisms.yaml (world generators), experiment_matrix.yaml (frozen sweeps),
-                   models.yaml, agents.yaml
+                   models.yaml
 worlds/            temporal-world construction, invariant checks, mechanisms/ (M1-M4), confounders/
 tasks/             task schema, served task templates, deterministic pair compiler
 tools/             the four interface surfaces exposed to agents (A0-A3)
@@ -32,6 +32,9 @@ figures/           the paper's figures, regenerated from runs/ by scripts/figure
 PREREGISTRATION*.md  cell/model/analysis declarations frozen before each experiment,
                    including all protocol amendments and one disclosed execution incident
 ```
+
+The preregistration files are verbatim frozen records; they occasionally cite internal working
+documents (e.g. `PAPER_CLAIMS.md`) that are not part of this artifact.
 
 `data/` (compiled worlds and task records) is generated, not committed; it is regenerated
 deterministically from `configs/mechanisms.yaml`, so a fresh clone reproduces byte-identical

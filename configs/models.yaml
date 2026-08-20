@@ -31,7 +31,8 @@ models:
     role: secondary subject
     note: >
       Different provider and model family, so a finding that survives both is not an artifact of
-      one vendor's tool-use style. Reachable from compute-host but NOT from gpu-cluster (see DECISIONS D1).
+      one vendor's tool-use style. Reachable from the API compute host but not from the GPU
+      cluster, whose nodes have no outbound internet access.
 
   # ---------------------------------------------------------------------------------------
   # Open-weight capability ladder (milestone C4). One family, three sizes, ONE quantization, so
