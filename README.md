@@ -54,6 +54,8 @@ python scripts/bootstrap_contrast.py   # the one reported confidence interval
 python scripts/rescore.py --all        # rebuild scored rows from stored traces
 python scripts/replay_backend.py --all # backend cost via replay, no LLM calls
 python scripts/diag_m4_anchor.py       # per-run M4 stage-2 windows vs the oracle t_c
+python scripts/diag_m4_payload.py      # M4 audit-boundary sensitivity: do cited payloads decide it?
+python scripts/check_m3_threshold.py   # M3 ablation: are labels monotone in the returned score?
 ```
 
 Requires Python 3.11 with `numpy`, `matplotlib`, and `pyyaml` (`pip install -r
@@ -72,6 +74,27 @@ your own SLURM account/partition).
 - Run identifiers are content-derived (task, condition, model, prompt hash, world hash), so a
   configuration change that should change behavior must change run ids —
   `scripts/preflight_new_worlds.py` enforces this before any re-run.
+- Counting. `runs/` holds 1,402 scored rows for 1,382 executed episodes and 1,350 distinct run
+  identities. Twenty rows are cached copies: the preregistered Opus 5 anchor episodes at R=512
+  (`anchors/`) are re-served by content hash into `resolution_opus/`, where the resolution curve
+  needs them (`cached: true`). Thirty-two identities were executed twice in different sweeps
+  (the gpt-5-mini `ambiguity=0` cells and the `resolution=512` cells are the same worlds, and
+  `latency_c1/` re-runs twelve R=32 episodes at concurrency 1); the hosted models sample
+  non-deterministically, so a few of those re-executions reached different decisions.
+  `evaluation/figdata.corpus_counts` reports all three numbers; `latency_c1/` is reported only in
+  the latency measurement and is excluded from every grid cell (`CELL_EXCLUDE_DIRS`).
+- M4 scoring. The reported M4 evidence criterion is the anchored, claim-sensitive stage-2 rule,
+  which needs the oracle closure time t_c recomputed from the world. The runner passes it to the
+  scorer, and `scripts/rescore.py --all` is idempotent on the committed rows (0 changed). The
+  history of that rule is recorded in `PREREGISTRATION_C5.md` (decision record, 2026-11-03).
+  `rescore.py` recompiles worlds at dev scale, so the 8K-node rows (`r3b_scale_*`) are skipped
+  by it and stand as scored at run time; they contain no M4 cells.
+- Sampling. `configs/models.yaml` requests temperature 0, but the hosted frontier APIs reject
+  the parameter and the backend drops it after the first refusal (`agents/backends.py`), so
+  Opus 5 and gpt-5-mini ran at provider-default sampling; the Qwen ladder ran at temperature 0
+  through vLLM. Each world is run once per sweep directory. The serving-controls file the ladder
+  job writes (`runs/ladder_<slot>_controls.json`: vLLM, torch, GPU and driver versions) was not
+  committed and is not recoverable from this artifact.
 - `scripts/test_*.py` and `scripts/selftest_schemas.py` are the invariant and schema test suite.
 
 ## Anonymity

@@ -80,3 +80,41 @@ behind a correct final answer.
 * Background topology is synthetic, as for M1–M3. The milestone prefers real topology "if
   practical"; it was not attempted within this deadline and is reported as a limitation rather
   than quietly omitted.
+
+## Decision record, 2026-11-03 (camera-ready; appended, nothing above edited)
+
+**What this document fixed before the runs, and what it did not.** The cells, budget, models,
+the metrics (PairAcc, EVPairAcc) and the diagnostic "how often a run reaches the right answer
+without ever binding the second stage to t_c" were declared above before any M4 episode. The
+*operational rule* for "binding the second stage to t_c" was not declared here. Two rules have
+existed since:
+
+* At first scoring and at submission, the stage-2 test was a **width-only proxy**
+  (`error_taxonomy._compound_stage2_bound`): a cited reachability window had to be a strict
+  sub-interval of the observation window no wider than 1.5 x the admissible lag. Under it the
+  M4 A3 cells scored EVPairAcc 0.60 (Opus 5) and 0.00 (gpt-5-mini).
+* During the pre-submission language review (2026-08-13, after the traces had been read) the
+  rule was replaced by the **anchored, claim-sensitive test**
+  (`error_taxonomy._compound_stage2_anchored`): the cited window must lie within the admissible
+  interval [t_c, t_c + admissible] padded by a quarter of the lag on each side, and an absence
+  claim must additionally cover the whole interval; t_c is recomputed from the world at scoring
+  time. Rescoring changed six Opus 5 A3 rows and moved Opus 5 to EVPairAcc 0.20; gpt-5-mini,
+  A1 and A2 were unchanged. The reported M4 numbers use this rule.
+
+The second rule is the stricter and more faithful reading of the diagnostic declared above, but
+it was fixed after the data were seen, and this record exists so that the paper can say so.
+
+**Boundary sensitivity, recorded for the camera-ready.** The decisive M4 inference, comparing
+returned arrival times with [t_c, t_c + admissible], is itself deterministic. Recomputed over the
+cited reachability and paths payloads of all twenty A3 episodes (`scripts/diag_m4_payload.py`),
+that comparison yields the gold label in 19 of 20 episodes (gpt-5-mini 4 of 5 pairs under the
+strict reading, 5 of 5 if a bounded path enumeration that returned fewer than `max_paths` routes
+counts as exhaustive; Opus 5 5 of 5). This is reported as a sensitivity of the audit boundary,
+not as a replacement for the anchored criterion, which deliberately does not credit a
+composition performed in prose over returned values.
+
+**Provenance caveat.** This artifact repository was assembled on 2026-08-12 from a development
+repository whose history is not included; the preregistration and the M4 traces were imported
+minutes apart, so the git history here cannot by itself show that this document preceded the
+episodes. The development repository's commits are referenced in the run manifests
+(`synced_commit`).

@@ -123,6 +123,7 @@ class MatrixRunner:
         # the budget from zero.
         self.budget = BudgetGuard.from_run_dir(self.out, budget_usd)
         self._lock = threading.Lock()
+        self._compound_tc: dict[str, dict[str, int]] = {}    # world_key -> {polarity: t_c}
         self._results_fh = (self.out / "results.jsonl").open("a")
 
     # ---------------------------------------------------------------- world preparation
@@ -167,6 +168,10 @@ class MatrixRunner:
                 failures.append(f"{key}: invariants {cp.invariants.failures()}")
                 continue
             pairs[key] = (cp.positive, cp.negative)
+            # M4 is scored against the oracle closure-completion time (the anchored stage-2
+            # rule); without it the width-only proxy applies and a fresh sweep would not
+            # reproduce the committed rows until `scripts/rescore.py` is run.
+            self._compound_tc[key] = cp.compound_tc or {}
             if self.verbose and (i % 25 == 0 or i == len(by_key)):
                 print(f"  compiled {i}/{len(by_key)} worlds", flush=True)
 
@@ -260,7 +265,8 @@ class MatrixRunner:
         return self._record(cell, rec, trace, cached=False)
 
     def _record(self, cell: Cell, rec: TaskRecord, trace: Trace, *, cached: bool) -> RunRow:
-        row = score(trace, rec, cell.condition)
+        tc = self._compound_tc.get(cell.world_key, {}).get(rec.polarity)
+        row = score(trace, rec, cell.condition, compound_tc=tc)
         run_cost = self.budget.record(trace.model, trace.total_input_tokens,
                                       trace.total_output_tokens)
         payload = {**{k: v for k, v in asdict(row).items() if k != "check"},

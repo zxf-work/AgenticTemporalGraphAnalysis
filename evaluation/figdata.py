@@ -23,6 +23,12 @@ C = {"A1": "#222222", "A2": "#D55E00", "A3": "#0072B2", "mini": "#8C8C8C"}
 #: the task text; PREREGISTRATION_M.md) whose runs are m3_v3_*.
 SKIP_DIRS = ("m3_mini", "m3_opus", "m3_v2_mini", "m3_v2_opus")
 
+#: valid episodes that are reported on their own and must not be merged into a grid cell.
+#: `latency_c1` re-executes twelve gpt-5-mini M1 R=32 episodes at concurrency 1 to measure
+#: end-to-end latency (paper sec. 5.2.4); its rows carry the `a2_m1=32` sweep name and would
+#: otherwise be pooled into the R=32 cells as a second sample of the same worlds.
+CELL_EXCLUDE_DIRS = ("latency_c1",)
+
 
 def _superseded(d: str, r: dict) -> bool:
     """Rows that are stale for a reason the directory name alone does not carry.
@@ -54,7 +60,31 @@ def load() -> list[dict]:
             if _superseded(d, r):
                 continue
             rows.append(r)
+    # Run ids are content-derived, so one episode can be served from cache into a second sweep
+    # directory (the preregistered Opus anchors at R=512 are reused by the resolution sweep).
+    # Such rows are kept, because the cell they land in needs them, but marked so the corpus
+    # count reports executed episodes rather than rows.
+    first_dir: dict[str, str] = {}
+    for r in rows:
+        first_dir.setdefault(r["run_id"], r["_dir"])
+    for r in rows:
+        r["_cached_copy"] = bool(r.get("cached")) and first_dir[r["run_id"]] != r["_dir"]
     return rows
+
+
+def corpus_counts(rows: list[dict]) -> dict[str, int]:
+    """Rows, executed episodes (rows minus cached copies), and distinct run identities.
+
+    The three differ because (a) cached copies re-serve one episode into a second sweep and
+    (b) a few run identities were genuinely executed twice in different sweeps (for example the
+    gpt-5-mini `ambiguity=0` cells and the `resolution=512` cells are the same worlds), with
+    outcomes that can differ because the hosted models sample non-deterministically.
+    """
+    executed = [r for r in rows if not r["_cached_copy"]]
+    return {"rows": len(rows), "executed_episodes": len(executed),
+            "distinct_run_ids": len({r["run_id"] for r in rows}),
+            "cached_copies": len(rows) - len(executed),
+            "re_executed_run_ids": len(executed) - len({r["run_id"] for r in rows})}
 
 
 def ev_valid(r: dict) -> bool:
@@ -106,6 +136,8 @@ def resolution_axis(rows: list[dict]) -> dict[tuple, dict[int, tuple]]:
         if name not in ("resolution", "resolution_fine", "a2_m1") or r.get("budget") != 16:
             continue
         if r.get("mechanism") != "cascade" or r.get("model") not in MODELS:
+            continue
+        if r["_dir"] in CELL_EXCLUDE_DIRS:
             continue
         # The robustness cells reuse the `resolution` sweep name at R=128 with a confounder overlay
         # or at test scale, and `pair_id` encodes mechanism/confounder/seed/variant but NOT scale --

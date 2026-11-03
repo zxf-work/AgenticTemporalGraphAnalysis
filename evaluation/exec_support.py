@@ -1,6 +1,6 @@
 """Executed-support robustness variant of evidence validity (final readiness review §5).
 
-\evpair{} scores only the computation the agent *cites* as support, so a low value could in
+EVPairAcc scores only the computation the agent *cites* as support, so a low value could in
 principle reflect citation diligence rather than the absence of a task-faithful computation: an
 agent might execute a correctly bound operation and then cite a broad exploratory call instead.
 ExecEV closes that loophole by re-running the same per-step task-constraint test over ALL executed
@@ -18,6 +18,16 @@ cited windows) are deliberately dropped; that is the point of the variant.
 Note that ExecEV is not mechanically >= EV: EV can hold via a cited static call (no temporal step
 cited at all), while ExecEV demands an executed *deciding* operation with task-faithful arguments.
 The two therefore decompose failures rather than bounding one another.
+
+Applicability. The per-step test exists only where a surface exposes a *deciding* operator whose
+arguments carry the task constraint: the A3 operators, and (by program inspection) A2. A0 and A1
+expose no such operator, so ExecEV is **not defined** for them and `exec_ev` returns ``None``
+rather than ``False``; a zero would read as a finding where no test was run. The same asymmetry
+applies to the cited rule (`parameterisation_report`), which inspects only A3 operators and A2
+programs: for A0/A1 the evidence criterion reduces to the structural conditions of
+`evaluation/checker.py` (cited steps exist, cited windows lie inside the horizon, a positive
+claim cites a support step), and EVPairAcc = PairAcc there is a property of what the checker can
+see, not evidence that the cited support was task-faithful.
 """
 
 from __future__ import annotations
@@ -84,8 +94,14 @@ def step_semvalid(step, task, mechanism: str, condition: str,
     return False
 
 
-def exec_ev(row: dict, trace, task, compound_tc: int | None = None) -> bool:
-    """ExecEV_i for one scored run."""
+#: surfaces with no deciding operator: ExecEV is not applicable there (see module docstring)
+NOT_APPLICABLE = ("A0", "A1")
+
+
+def exec_ev(row: dict, trace, task, compound_tc: int | None = None) -> bool | None:
+    """ExecEV_i for one scored run; ``None`` where the variant is not applicable (A0, A1)."""
+    if row.get("condition") in NOT_APPLICABLE:
+        return None
     correct = (row.get("decision") == "present") == (row.get("polarity") == "positive")
     claim_positive = (trace.final_claim or {}).get("decision") == "present"
     return correct and any(step_semvalid(s, task, row["mechanism"], row["condition"],

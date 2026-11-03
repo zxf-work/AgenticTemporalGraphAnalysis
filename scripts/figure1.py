@@ -89,7 +89,7 @@ ax1.set_xlim(-0.62, 2.62)
 ax1.set_ylim(0, 1.26)
 ax1.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
 ax1.set_ylabel("pair accuracy")
-ax1.set_title("(a) perfect answers, absent evidence", loc="left")
+ax1.set_title("(a) perfect answers, no anchored cited operation", loc="left")
 ax1.legend(handles=[Patch(facecolor="#555", edgecolor="#555", label="evidence-valid (EVPairAcc)"),
                     Patch(facecolor="white", edgecolor="#555", hatch="/////",
                           label="correct, without task-consistent cited support")],

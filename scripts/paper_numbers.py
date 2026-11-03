@@ -17,7 +17,8 @@ from collections import Counter, defaultdict
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from evaluation.figdata import MODELS, by_interface, ev_valid, load, paired, resolution_axis
+from evaluation.figdata import (CELL_EXCLUDE_DIRS, MODELS, by_interface, corpus_counts,
+                                ev_valid, load, paired, resolution_axis)
 
 rows = load()
 LADDER = {"qwen2.5-7b-instruct-awq": "Qwen2.5-7B", "qwen2.5-14b-instruct-awq": "Qwen2.5-14B",
@@ -29,7 +30,12 @@ def rule(s):
 
 
 rule("0. CORPUS")
-print(f"valid scored runs        : {len(rows)}")
+cc = corpus_counts(rows)
+print(f"scored rows              : {cc['rows']}")
+print(f"executed episodes        : {cc['executed_episodes']}  "
+      f"(rows minus {cc['cached_copies']} cached copies of episodes reused by content hash)")
+print(f"distinct run identities  : {cc['distinct_run_ids']}  "
+      f"({cc['re_executed_run_ids']} identities were executed twice in different sweeps)")
 print(f"mechanisms               : {dict(Counter(r['mechanism'] for r in rows))}")
 print(f"interfaces               : {dict(Counter(r['condition'] for r in rows))}")
 print(f"models                   : {dict(Counter(r['model'] for r in rows))}")
@@ -57,6 +63,7 @@ for r in rows:
     # baseline condition only -- the robustness cells reuse the `resolution` sweep name at
     # R=128, and pair_id does not encode scale, so they merge into this cell otherwise
     if (name in ("resolution", "resolution_fine") and r["condition"] == "A1"
+            and r["_dir"] not in CELL_EXCLUDE_DIRS
             and r["model"] == "claude-opus-5" and r.get("budget") == 16
             and r.get("confounder", "none") == "none" and r.get("scale", "dev") == "dev"):
         recon[int(val)].append(bool(r.get("used_reconstruction")))
@@ -71,9 +78,36 @@ for R in RS:
 print("mini A1 reconstruction rate (all R pooled):", end=" ")
 mr = [bool(r.get("used_reconstruction")) for r in rows
       if (r.get("sweep") or "").startswith(("resolution=", "resolution_fine="))
+      and r["_dir"] not in CELL_EXCLUDE_DIRS
       and r["condition"] == "A1" and r["model"] == "gpt-5-mini"
       and r.get("confounder", "none") == "none" and r.get("scale", "dev") == "dev"]
 print(f"{sum(mr) / len(mr):.2f}" if mr else "n/a")
+
+rule("1b. M1 RESOLUTION AXIS: TOOL CALLS AND BUDGET SATURATION (Table 1 calls column)")
+# Camera-ready addition (reviewer 1, C4): whether failures coincide with budget exhaustion.
+# "at cap" = runs that used all 16 permitted calls; the harness then asks for the conclusion.
+# No run in these cells ended with status `budget_exhausted` (the turn cap), so saturation is
+# the only budget signal available.
+cells1 = defaultdict(list)
+for r in rows:
+    name, _, val = (r.get("sweep") or "").partition("=")
+    if name not in ("resolution", "resolution_fine", "a2_m1") or r.get("budget") != 16:
+        continue
+    if r.get("mechanism") != "cascade" or r.get("model") not in MODELS:
+        continue
+    if r["_dir"] in CELL_EXCLUDE_DIRS:
+        continue
+    if r.get("confounder", "none") != "none" or r.get("scale", "dev") != "dev":
+        continue
+    cells1[(r["condition"], r["model"], int(val))].append(r)
+print(f"{'cond':<5}{'model':<12}{'R':>5}{'n':>4}{'calls':>7}{'at cap':>8}{'exhausted':>11}")
+for k in sorted(cells1, key=lambda x: (x[0], x[1] != "claude-opus-5", x[2])):
+    v = cells1[k]
+    calls = [x["tool_calls"] for x in v]
+    cap = sum(1 for x in v if x["tool_calls"] >= 16)
+    bex = sum(1 for x in v if x.get("status") == "budget_exhausted")
+    print(f"{k[0]:<5}{MODELS[k[1]]:<12}{k[2]:>5}{len(v):>4}{sum(calls) / len(calls):>7.1f}"
+          f"{cap:>5}/{len(v):<2}{bex:>11}")
 
 rule("2. M2 CLOSURE WAVE / M3 REGIME SWITCH (budget axis)")
 for mech in ("closure_wave", "regime_switch"):
@@ -212,10 +246,15 @@ for f in (ROOT / "runs").glob("*/backend_cost.jsonl"):
         continue
     for line in f.read_text().splitlines():
         if line.strip():
-            bc.append(json.loads(line))
+            bc.append({**json.loads(line), "_dir": f.parent.name})
 g = defaultdict(list)
+# One replayed row per executed episode: the 20 cached copies of Opus anchor episodes in the
+# resolution sweep were replayed in both directories, and the latency control re-executes
+# twelve gpt-5-mini episodes under a different concurrency; neither belongs in these averages.
+_cached_keys = {(r["_dir"], r["run_id"]) for r in rows if r["_cached_copy"]}
 for r in bc:
-    if r["model"] in MODELS:
+    if r["model"] in MODELS and (r.get("_dir"), r.get("run_id")) not in _cached_keys \
+            and r.get("_dir") not in CELL_EXCLUDE_DIRS:
         g[(r["model"], r["condition"])].append(r)
 print(f"   {'model':<12}{'cond':<5}{'runs':>5}{'llm':>7}{'tools':>7}{'inTok':>9}{'$/run':>8}"
       f"{'events':>12}{'ev/LLM':>10}{'bkendms':>9}")
@@ -267,3 +306,31 @@ for key in sorted(g, key=str):
     (conf_scale, cond, m) = key
     print(f"   {LABEL.get(conf_scale, str(conf_scale)):<13}{cond:<4}{MODELS[m]:<12} "
           f"pair={pa:.2f} recon={rr:.2f} calls={calls:>4.1f} n={n} {bits}")
+
+rule("9. SINGLE-PAIR CELLS (which pair carries the claim)")
+# Camera-ready addition (reviewer 3): two reported differences rest on one matched pair each.
+def _pairs(sel):
+    by = defaultdict(dict)
+    for r in sel:
+        by[r["pair_id"]][r["polarity"]] = r
+    return {k: v for k, v in by.items() if len(v) == 2}
+
+sel = [r for r in rows if r["model"] == "qwen2.5-14b-instruct-awq" and r["condition"] == "A1"
+       and r.get("sweep") == "ladder_m1_a1=256"]
+print("   Qwen2.5-14B, A1, R=256 (PairAcc %.2f):" % paired(sel)[0])
+for pid, v in sorted(_pairs(sel).items()):
+    p_, n_ = v["positive"], v["negative"]
+    ok = p_["decision"] == "present" and n_["decision"] == "absent"
+    print(f"     seed {p_['seed']}: pos={p_['decision']:<12} ({p_['tool_calls']} calls, "
+          f"{p_.get('failure_category')}, ev={ev_valid(p_)})  neg={n_['decision']:<12} "
+          f"({n_['tool_calls']} calls)  {'PAIR CORRECT' if ok else ''}")
+sel = [r for r in rows if r["model"] == "claude-opus-5" and r["condition"] == "A1"
+       and r.get("scale") == "test" and (r.get("sweep") or "").endswith("=128")]
+print("   Opus 5, A1, R=128, 8K nodes (PairAcc %.2f):" % paired(sel)[0])
+for pid, v in sorted(_pairs(sel).items()):
+    p_, n_ = v["positive"], v["negative"]
+    ok = p_["decision"] == "present" and n_["decision"] == "absent"
+    print(f"     seed {p_['seed']}: pos={p_['decision']:<12} ({p_['tool_calls']} calls, "
+          f"recon={bool(p_.get('used_reconstruction'))}, {p_.get('failure_category')})  "
+          f"neg={n_['decision']:<8} ({n_['tool_calls']} calls)  {'PAIR CORRECT' if ok else 'PAIR FAILED'}")
+print(f"   8K cell: {sum(1 for r in sel if r['tool_calls'] >= 16)}/{len(sel)} runs at the 16-call cap")

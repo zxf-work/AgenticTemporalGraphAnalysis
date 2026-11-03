@@ -126,7 +126,7 @@ ax.set_ylim(-0.20, 1.30)
 ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
 ax.set_title("(a) accuracy collapses", loc="left")
 
-# ---------------- (b) the strategy does NOT collapse with it
+# ---------------- (b) localization attempts do NOT collapse with it
 for m, col, mk, ls in (("claude-opus-5", C["A1"], "o", "-"), ("gpt-5-mini", C["mini"], "s", "--")):
     d = REC.get(("A1", m), {})
     xs = [R for R in RS if R in d]
@@ -134,7 +134,7 @@ for m, col, mk, ls in (("claude-opus-5", C["A1"], "o", "-"), ("gpt-5-mini", C["m
              ms=4.5 if ls == "-" else 3.6, ls=ls)
 axr.text(150, 0.80, "A1 \u00b7 Opus 5", fontsize=7, color=C["A1"])
 axr.text(150, 0.22, "A1 \u00b7 gpt-5-mini", fontsize=7, color=C["mini"])
-axr.annotate("strategy persists\nwhere accuracy is 0",
+axr.annotate("localization attempts persist\nwhere accuracy is 0",
              xy=(430, 0.92), xytext=(300, 0.55), fontsize=6.4, color=C["A1"], ha="center",
              arrowprops=dict(arrowstyle="->", color=C["A1"], lw=0.7))
 axr.set_xscale("log", base=2)
@@ -145,7 +145,7 @@ axr.set_xlabel("temporal resolution $R$")
 axr.set_ylabel("reconstruction rate")
 axr.set_ylim(-0.06, 1.12)
 axr.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
-axr.set_title("(b) but the strategy is still attempted", loc="left")
+axr.set_title("(b) but localization is still attempted", loc="left")
 
 fig.tight_layout(w_pad=2.0)
 OUT.mkdir(exist_ok=True)
