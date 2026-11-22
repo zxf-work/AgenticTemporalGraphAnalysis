@@ -13,6 +13,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
 from evaluation.checker import check
 from evaluation.error_taxonomy import classify, parameterisation_report, reconstruction_stats
+from evaluation.exec_support import support_semvalid
 from evaluation.metrics import RunRow
 from tasks.schema import TaskRecord
 from traces.schema import Trace
@@ -39,6 +40,8 @@ def score(trace: Trace, rec: TaskRecord, condition: str,
         backend_ms=sum(s.latency_ms for s in trace.steps),
         llm_calls=trace.llm_calls,
         param_error_rate=par.error_rate, cited_bad_support=par.cited_bad_support,
+        support_semvalid=support_semvalid(trace, rec.task, rec.mechanism, condition,
+                                          compound_tc=compound_tc),
         decomposition_rate=par.decomposition_rate,
         n_temporal_calls=par.n_temporal_calls,
         used_reconstruction=bool(rec_stats["used_reconstruction"]),

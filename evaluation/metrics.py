@@ -20,6 +20,7 @@ from typing import Any, Iterable
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
 from evaluation.checker import CheckResult
+from evaluation.ev_rule import SUBMITTED, get_ev_rule
 
 CONSISTENCY = ("correct_flip", "same_positive", "same_negative", "reverse_flip", "incomplete")
 
@@ -57,22 +58,43 @@ class RunRow:
     min_window_width: int | None = None
     failure_category: str = ""
 
+    # set by `score_run.score`: at least one step cited as support, and resolving to an executed
+    # step, passes the per-step task-constraint test (`exec_support.support_semvalid`)
+    support_semvalid: bool = False
+
     # ---- C2: evidence-valid analytical correctness -------------------------------------
-    # EV_i = [answer correct] AND [the decisive cited computation preserved the question's
-    # semantics]. Both conjuncts are deterministic, per the milestone's requirement that no LLM
-    # judge acts as the primary validity oracle where a parameter check is possible:
+    # EV_i under the rule the paper states (Eq. 3; `evaluation/ev_rule.py`):
     #
-    #   * `check.evidence_grounded` already requires the decision to be right, the cited steps to
-    #     EXIST (so a fabricated citation fails), the citations to stay inside the observable
-    #     horizon, and a positive claim to cite support;
-    #   * `cited_bad_support` fails a run whose cited support asked a *different question* --
-    #     unconstrained reachability standing in for delta-constrained reachability, and so on.
+    #   EV_i = [answer correct] AND [no cited step is nonexistent]
+    #          AND [at least one cited support step satisfies SemValid]
+    #
+    # All conjuncts are deterministic, per the milestone's requirement that no LLM judge acts as
+    # the primary validity oracle where a parameter check is possible. The rule is existential
+    # over cited support on every interface and mechanism: an exploratory call cited beside the
+    # task-bound computation does not disqualify a run. An empty support set is evidence-invalid,
+    # for *absent* claims too.
     #
     # Legitimate decomposition (narrower windows, intermediate waypoints) is deliberately NOT a
-    # disqualifier; it is reported separately as `decomposition_rate`. Counting it here would
-    # score competent sub-interval analysis as invalid evidence.
+    # disqualifier; it is reported separately as `decomposition_rate`.
     @property
     def ev_valid(self) -> bool:
+        if get_ev_rule() == SUBMITTED:
+            return self.ev_valid_submitted
+        return bool(self.check.decision_correct and self.check.citations_exist
+                    and self.support_semvalid)
+
+    # The rule the reviewed submission's numbers were computed with, kept so they stay
+    # reproducible (`--ev-rule submitted`):
+    #
+    #   * `check.evidence_grounded` requires the decision to be right, the cited steps to EXIST,
+    #     the citations to stay inside the observable horizon, and a positive claim to cite
+    #     support;
+    #   * `cited_bad_support` fails a run whose cited support asked a *different question*. For A2
+    #     and for the M4 stage-2 query it fires only when NO cited support call is task-bound;
+    #     for A3 on M1-M3 it fires as soon as ANY cited support call carries a different bound,
+    #     which is stricter than the rule the paper states.
+    @property
+    def ev_valid_submitted(self) -> bool:
         return bool(self.check.evidence_grounded) and not self.cited_bad_support
 
 

@@ -1,6 +1,12 @@
 """Every number quoted in the paper, emitted from the run data in one place.
 
-    python scripts/paper_numbers.py
+    python scripts/paper_numbers.py                        # the paper's numbers
+    python scripts/paper_numbers.py --ev-rule submitted    # as in the reviewed submission
+
+Evidence validity (every `ev=` / `citedEV=` value below) follows the rule the paper states: at
+least one cited support step satisfies the task-constraint test. The reviewed submission's values
+were computed with a stricter rule for A3 on M1-M3; `--ev-rule submitted` reproduces them
+(`evaluation/ev_rule.py`). No other quantity depends on the rule.
 
 Written so that no figure in the manuscript is transcribed by hand. Building Figure 1 this way
 already caught a per-seed transcription error in `PAPER_CLAIMS.md`; the same discipline applies to
@@ -17,8 +23,10 @@ from collections import Counter, defaultdict
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from evaluation.ev_rule import ev_rule_from_argv
 from evaluation.figdata import MODELS, by_interface, ev_valid, load, paired, resolution_axis
 
+EV_RULE = ev_rule_from_argv(sys.argv)
 rows = load()
 LADDER = {"qwen2.5-7b-instruct-awq": "Qwen2.5-7B", "qwen2.5-14b-instruct-awq": "Qwen2.5-14B",
           "qwen2.5-32b-instruct-awq": "Qwen2.5-32B"}
@@ -29,6 +37,9 @@ def rule(s):
 
 
 rule("0. CORPUS")
+print(f"evidence-validity rule   : {EV_RULE}"
+      + ("  (the reviewed submission's rule; the paper's is `stated`)"
+         if EV_RULE != "stated" else ""))
 print(f"valid scored runs        : {len(rows)}")
 print(f"mechanisms               : {dict(Counter(r['mechanism'] for r in rows))}")
 print(f"interfaces               : {dict(Counter(r['condition'] for r in rows))}")
@@ -137,10 +148,29 @@ for mech, sweeps in HEAD.items():
         pa, ev, n, bits = paired(sel)
         print(f"   {mech:<14}{MODELS[m]:<12} pair={pa:.2f} ev={ev:.2f} gap={pa - ev:.2f} n={n}")
 
+# What the stored `cited_bad_support` flag measures on M1-M3: a semantic call with a missing or
+# different bound is cited as support. Under the stated rule that alone does not make a run
+# evidence-invalid; it does only when no cited support step is task-bound. Both counts are
+# printed, with the rule named, so the co-citation behaviour stays visible. Rule-independent.
+print("\n   off-constraint semantic call cited as support (A3 headline runs, M1-M3; both models):")
+tot = [0, 0, 0]
+for mech in ("cascade", "closure_wave", "regime_switch"):
+    sel = [r for r in rows if r["mechanism"] == mech and r["condition"] == "A3"
+           and r["model"] in MODELS and r.get("sweep") in HEAD[mech]
+           and r.get("confounder", "none") == "none" and r.get("scale", "dev") == "dev"]
+    off = [r for r in sel if r.get("cited_bad_support")]
+    also = sum(ev_valid(r, "stated") for r in off)
+    tot = [tot[0] + len(sel), tot[1] + len(off), tot[2] + also]
+    print(f"   {mech:<14}runs={len(sel):<4} off-constraint cited={len(off):<3} "
+          f"of which a task-bound call is also cited (stated-rule valid)={also}")
+print(f"   {'M1-M3 total':<14}runs={tot[0]:<4} off-constraint cited={tot[1]:<3} "
+      f"of which a task-bound call is also cited (stated-rule valid)={tot[2]}")
+
 rule("4c. EXECUTED-SUPPORT ROBUSTNESS (ExecEVPairAcc, headline cells)")
 # Final readiness review §5: recompute the evidence criterion over ALL executed steps, cited or
-# not, to separate citation omission from absence of a task-faithful computation. Loads traces
-# and recompiles pairs like scripts/rescore.py; rows whose world no longer matches are skipped.
+# not, to separate a task-faithful computation that was executed but not cited as support from
+# the absence of one. Loads traces and recompiles pairs like scripts/rescore.py; rows whose world
+# no longer matches are skipped.
 import yaml                                                                     # noqa: E402
 from evaluation.exec_support import exec_ev                                     # noqa: E402
 from tasks.lookup import compiled_pair                                          # noqa: E402

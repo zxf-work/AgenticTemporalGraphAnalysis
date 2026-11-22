@@ -43,8 +43,12 @@ def compiled_pair(row: dict[str, Any], mcfg: dict[str, Any], xcfg: dict[str, Any
     mech = row["mechanism"]
     seed = int(row.get("seed", 0))
     conf = row.get("confounder", "none")
+    # The scale is part of the world: the 8K-node robustness rows share sweep name, seed and
+    # pair_id with their 2K-node counterparts, so compiling them at "dev" yields a different
+    # world and every such row was skipped on a hash mismatch.
+    scale = row.get("scale") or "dev"
     ov = overrides_for(row, xcfg)
-    key = (mech, seed, conf, tuple(sorted(ov.items())))
+    key = (mech, seed, conf, scale, tuple(sorted(ov.items())))
     if key not in cache:
         variant = stable_hash(sorted(ov.items()), length=6) if ov else ""
         cfg = json.loads(json.dumps(mcfg))
@@ -54,7 +58,7 @@ def compiled_pair(row: dict[str, Any], mcfg: dict[str, Any], xcfg: dict[str, Any
                 cfg[mk][k] = v
             elif k in cfg["background"]:
                 cfg["background"][k] = v
-        cache[key] = compile_pair(cfg, mech, seed, confounder=conf, scale="dev", paraphrase=1,
+        cache[key] = compile_pair(cfg, mech, seed, confounder=conf, scale=scale, paraphrase=1,
                                   write=write, variant=variant)
     return cache[key]
 

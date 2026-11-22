@@ -9,9 +9,14 @@ from __future__ import annotations
 
 import json
 import pathlib
+import sys
 from collections import defaultdict
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from evaluation.ev_rule import SUBMITTED, get_ev_rule                           # noqa: E402
+
 OUT = ROOT / "figures"
 
 MODELS = {"claude-opus-5": "Opus 5", "gpt-5-mini": "gpt-5-mini"}
@@ -57,15 +62,97 @@ def load() -> list[dict]:
     return rows
 
 
-def ev_valid(r: dict) -> bool:
-    """EV_i: the answer is right AND the cited computation preserved the task's semantics.
+def ev_valid_submitted(r: dict) -> bool:
+    """EV_i under the rule the reviewed submission's numbers used (`--ev-rule submitted`).
 
-    Defined *existentially* over cited support — see `evaluation/error_taxonomy.py`. A run is
-    evidence-valid when at least one cited computation establishes the claim under the task's
-    constraints; a broad reconnaissance call cited alongside a correctly bound one does not
-    disqualify it.
+    Read from the stored row. Existential for A2 and for the M4 stage-2 query, but for A3 on
+    M1-M3 `cited_bad_support` is set as soon as *any* semantic call cited as support carries a
+    bound different from the task's. See `evaluation/ev_rule.py`.
     """
     return bool((r.get("check") or {}).get("evidence_grounded")) and not r.get("cited_bad_support")
+
+
+# ---- the stated rule is derived from the stored trace, like ExecEVPairAcc -----------------
+# The scored rows in runs/*/results.jsonl carry the ingredients of the submitted rule only, so
+# the stated rule is recomputed from each run's trace and its recompiled task record. Nothing is
+# written back: the corpus stays byte-identical and both rules stay reproducible from it.
+_cfg: dict = {}
+_pair_cache: dict = {}
+_ev_cache: dict[tuple, bool] = {}
+_alt_traces: dict[str, dict[tuple, list[dict]]] = {}
+
+
+def _configs() -> tuple[dict, dict]:
+    if not _cfg:
+        import yaml
+        _cfg["m"] = yaml.safe_load((ROOT / "configs/mechanisms.yaml").read_text())
+        _cfg["x"] = yaml.safe_load((ROOT / "configs/experiment_matrix.yaml").read_text())
+    return _cfg["m"], _cfg["x"]
+
+
+def trace_and_record(r: dict):
+    """(Trace, TaskRecord, oracle t_c or None) behind one scored row.
+
+    Raises rather than guessing when the trace is missing or its world no longer recompiles to
+    the recorded hash: a verdict computed against a different world would be silently wrong.
+    """
+    from tasks.lookup import compiled_pair
+    from traces.schema import Trace
+
+    mcfg, xcfg = _configs()
+    cp = compiled_pair(r, mcfg, xcfg, _pair_cache)
+    rec = getattr(cp, r["polarity"])
+    d = r["_dir"]
+    tp = ROOT / "runs" / d / "traces" / f"{r.get('run_id', '')}.json"
+    if tp.exists():
+        td = json.loads(tp.read_text())
+    else:
+        # The deterministic reference script stores its traces under ids of its own; they are
+        # matched by what identifies the episode: task, world and budget.
+        if d not in _alt_traces:
+            idx: dict[tuple, list[dict]] = defaultdict(list)
+            for f in sorted((ROOT / "runs" / d / "traces").glob("*.json")):
+                t = json.loads(f.read_text())
+                idx[(t["task_id"], t["world_hash"], t["tool_budget"])].append(t)
+            _alt_traces[d] = idx
+        cands = _alt_traces[d].get((rec.task.task_id, rec.world_hash, r.get("budget")), [])
+        if len(cands) != 1:
+            raise LookupError(f"no unique stored trace for {d}/{r.get('run_id')}")
+        td = cands[0]
+    trace = Trace.from_dict(td)
+    if trace.world_hash != rec.world_hash:
+        raise LookupError(f"{d}/{r.get('run_id')}: stored trace is for world {trace.world_hash}, "
+                          f"the configs now compile {rec.world_hash}")
+    return trace, rec, (cp.compound_tc or {}).get(r["polarity"])
+
+
+def ev_valid_stated(r: dict) -> bool:
+    """EV_i under the rule the paper states: correct, no nonexistent citation, and at least one
+    cited support step passes the per-step task-constraint test (`exec_support.cited_ev`)."""
+    key = (r["_dir"], r.get("run_id"), r["pair_id"], r["polarity"], r.get("budget"))
+    if key not in _ev_cache:
+        # a wrong decision is evidence-invalid under any rule; no trace is needed to say so
+        if r.get("decision") != ("present" if r["polarity"] == "positive" else "absent"):
+            _ev_cache[key] = False
+        else:
+            from evaluation.exec_support import cited_ev
+            trace, rec, tc = trace_and_record(r)
+            _ev_cache[key] = cited_ev(trace, rec.task, r["mechanism"], r["condition"],
+                                      rec.gold, compound_tc=tc)
+    return _ev_cache[key]
+
+
+def ev_valid(r: dict, rule: str | None = None) -> bool:
+    """EV_i: the answer is right AND a cited computation preserved the task's constraints.
+
+    Defined *existentially* over cited support (the paper's Eq. 3): a run is evidence-valid when
+    at least one cited support computation satisfies the task-constraint test, and a broad
+    reconnaissance call cited alongside it does not disqualify the run. ``rule`` overrides the
+    rule in force (`evaluation/ev_rule.py`); ``"submitted"`` reproduces the reviewed submission.
+    """
+    if (rule or get_ev_rule()) == SUBMITTED:
+        return ev_valid_submitted(r)
+    return ev_valid_stated(r)
 
 
 def paired(rows: list[dict]) -> tuple[float, float, int, str]:

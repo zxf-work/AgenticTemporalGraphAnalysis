@@ -1,6 +1,6 @@
 """Figure 1 — the same final answer, different analytical validity.
 
-    python scripts/figure1.py [--data-only]
+    python scripts/figure1.py [--data-only] [--ev-rule submitted]
 
 This is the paper's lead figure. The capability frontier (previously panel (a) here) moved to
 Figure 2, because the strongest and least dismissible result is not that a primitive interface has
@@ -24,7 +24,12 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
+from evaluation.ev_rule import ev_rule_from_argv
 from evaluation.figdata import C, MODELS, OUT, by_interface, load, rc_params
+
+# Panel (a) plots EVPairAcc. On M4 the stated and the submitted rule give the same values in
+# every cell, so the figure is identical under both; the flag exists for reproducibility.
+EV_RULE = ev_rule_from_argv(sys.argv)
 
 # ---------------------------------------------------------------- the trace exhibit
 # Recovered from runs/m4_mini seed 0; kept here as display coordinates with the source stated so
@@ -39,7 +44,7 @@ EX = {
 rows = load()
 B = by_interface(rows, "compound")
 
-print("M4 compound, B=32")
+print(f"M4 compound, B=32  (evidence-validity rule: {EV_RULE})")
 print(f"  {'cond':<5}{'model':<13}{'PairAcc':>9}{'EVPair':>8}{'gap':>7}{'n':>4}  per-seed")
 for cond in ("A1", "A2", "A3"):
     for m in MODELS:

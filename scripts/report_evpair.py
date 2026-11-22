@@ -2,28 +2,35 @@
 
     python scripts/report_evpair.py runs/resolution_opus runs/xmech_opus ...
     python scripts/report_evpair.py --all
+    python scripts/report_evpair.py --all --ev-rule submitted
 
-Turns the "30% of A3 conclusions cite a different-question result" observation into a reusable
-metric, and reports it beside plain pair accuracy so the gap is visible:
+Reports evidence-valid pair accuracy beside plain pair accuracy so the gap is visible:
 
-    EV_i        = [answer correct] AND [decisive cited computation preserved task semantics]
+    EV_i        = [answer correct] AND [no cited step is nonexistent]
+                  AND [at least one cited support step satisfies the task-constraint test]
     EVPairAcc   = (1/N) sum_i EV_i^+ EV_i^-
 
-Both conjuncts are deterministic. No LLM judge is used anywhere in this file, per the milestone's
+Every conjunct is deterministic. No LLM judge is used anywhere in this file, per the milestone's
 requirement that deterministic parameter checks are the primary validity oracle.
 
-What makes a run evidence-INVALID, and why each is separate:
+What makes a run evidence-INVALID under this rule (the one the paper states):
 
-  * cited a step that does not exist -- fabrication. Caught by `check.citations_exist`. This is
-    the dominant failure of the smaller open-weight subjects, which emit a well-formed claim
-    citing tool calls they never made.
-  * cited a step that asked a DIFFERENT QUESTION -- e.g. unconstrained reachability offered as
-    support for a delta-constrained question. Caught by `cited_bad_support`.
-  * positive claim with no support citation, or a citation outside the observable horizon.
+  * cited a step that does not exist -- a nonexistent-step citation. This is the dominant failure
+    of the smaller open-weight subjects, which emit a well-formed claim citing tool calls they
+    never made.
+  * cited no support step at all, whatever the decision.
+  * no cited support step is bound to the task's constraint -- e.g. only unconstrained
+    reachability is offered as support for a delta-constrained question.
 
-What does NOT make a run invalid: narrowing a window, or probing an intermediate node. That is
-ordinary decomposition, reported separately as `decomp`. Counting it as invalid would score
-competent analysis as a defect -- the error we already made once and corrected.
+What does NOT make a run invalid: citing an exploratory or off-bound call BESIDE a task-bound
+one, narrowing a window, or probing an intermediate node. `diffQ` still reports how often an
+off-bound call is cited as support, and `decomp` how often a call is a decomposition probe.
+
+`--ev-rule submitted` scores with the rule the reviewed submission used
+(`check.evidence_grounded and not cited_bad_support`; see `evaluation/ev_rule.py`), which fails an
+A3 run on M1-M3 as soon as any off-bound semantic call is cited as support. The stated rule is
+derived from stored traces and recompiled worlds, so under it rows whose world no longer
+recompiles (the superseded sweeps) are left out and counted.
 
 Note EVPairAcc <= PairAcc by construction: it adds conjuncts to a correct answer.
 """
@@ -36,7 +43,12 @@ import sys
 from collections import defaultdict
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
+from evaluation import figdata                                                  # noqa: E402
+from evaluation.ev_rule import STATED, ev_rule_from_argv                        # noqa: E402
+
+EV_RULE = ev_rule_from_argv(sys.argv)
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 if "--all" in sys.argv or not args:
     dirs = sorted(d for d in (ROOT / "runs").glob("*") if (d / "results.jsonl").exists())
@@ -58,9 +70,24 @@ if not rows:
 
 
 def ev_valid(r: dict) -> bool:
-    """EV_i for one run. Deterministic; mirrors RunRow.ev_valid."""
-    chk = r.get("check") or {}
-    return bool(chk.get("evidence_grounded")) and not r.get("cited_bad_support", False)
+    """EV_i for one run under the rule in force. Deterministic; mirrors RunRow.ev_valid."""
+    return figdata.ev_valid(r, EV_RULE)
+
+
+if EV_RULE == STATED:
+    # The stated rule needs each run's trace and recompiled task record. Superseded sweeps no
+    # longer recompile to their recorded worlds; they cannot be scored and are left out.
+    kept, unscorable = [], 0
+    for r in rows:
+        try:
+            figdata.trace_and_record(r)
+            kept.append(r)
+        except (LookupError, KeyError, OSError, ValueError):
+            unscorable += 1
+    rows = kept
+    if unscorable:
+        print(f"{unscorable} rows left out: their world no longer recompiles or their trace is "
+              f"missing (superseded sweeps); `--ev-rule submitted` scores them from stored rows\n")
 
 
 # The deterministic reference algorithm sets only {"decision": ...} and never populates an
@@ -76,6 +103,7 @@ for r in rows:
     groups[(r.get("mechanism", "?"), r.get("model", "?"), r.get("condition", "?"),
             r.get("budget"), r.get("sweep", ""))].append(r)
 
+print(f"evidence-validity rule: {EV_RULE}")
 print(f"{len(rows)} runs across {len(dirs)} run dirs"
       + (f"  ({skipped_ref} reference-algorithm runs excluded: no evidence list by design)"
          if skipped_ref else "") + "\n")
