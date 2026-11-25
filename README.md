@@ -1,18 +1,93 @@
-# Capability Is Not Validity — anonymous artifact
+# Capability Is Not Validity: Evaluating Agentic Temporal Graph Analysis
 
-Source code, configurations, preregistration records, and the complete run corpus for the WSDM
-2027 submission *Capability Is Not Validity: Evaluating Agentic Temporal Graph Analysis*.
+Code, configurations, preregistration records and the complete run corpus for the WSDM 2027 paper
+*Capability Is Not Validity: Evaluating Agentic Temporal Graph Analysis*
+([doi:10.1145/3862322.3863709](https://doi.org/10.1145/3862322.3863709)). See [Citation](#citation).
 
-**Research question.** Agentic analysis of temporal graphs is evaluated along two independent
-axes: what a model–interface system is *capable* of concluding, and whether the computation cited
-in support of a successful conclusion actually *establishes* the constrained proposition asked
-(trace-grounded evidence validity).
+## What this project is about
 
-**Method.** Matched counterfactual world pairs `(G+, G-)`. `G-` is produced from `G+` by permuting
-the *assignment* of the existing timestamp multiset to events, subject to constraints that break
-the target temporal mechanism. Node set, static edge multiset, event count, and global timestamp
-multiset are identical **by construction**; only the temporal assignment map differs. An agent
-that does not use the decisive temporal evidence cannot separate the two worlds.
+LLM agents increasingly analyze data by calling tools step by step and then reporting an answer.
+Final-answer accuracy is the usual way to evaluate them, but it hides two different questions:
+
+- **Capability.** Can this model, given this tool interface, reach the right conclusion at all?
+  The answer depends on whether the interface exposes the needed information, whether the model
+  finds a strategy, and whether it completes that strategy within its budget.
+- **Evidence validity.** When the model is right, does the computation it *cites* as evidence
+  actually establish the proposition it was asked about? Or did it reach the answer some other way?
+
+This project measures the two separately and deterministically, with no LLM judge. Temporal graphs
+are the testbed, because the answer to a temporal question can be flipped while everything
+non-temporal stays the same.
+
+![Five stages at which an agentic analysis can fail; final-answer accuracy sees only the last one](docs/framework.png)
+
+*An analysis can fail at five stages. Final-answer accuracy observes only the far right, so it
+cannot tell which stage failed. Each red label is a failure this project measures.*
+
+### Matched temporal counterfactuals
+
+Every task is asked on a pair of worlds, `G+` and `G-`.
+
+- **What is held fixed.** The two worlds have the same node set, the same static edge multiset,
+  the same number of events and the same global multiset of timestamps, **by construction**.
+- **What differs.** Only which event carries which timestamp. That assignment is permuted so the
+  target temporal proposition is true in `G+` and false in `G-`.
+
+An agent that does not use the decisive temporal evidence cannot tell the two worlds apart.
+
+The four mechanisms:
+
+| | mechanism | question |
+|---|---|---|
+| M1 | bounded cascade | Is there a time-respecting path from s to t with every wait at most Δ? |
+| M2 | closure wave | Does a large enough share of a focal node set's triangles close within δ of their second edge? |
+| M3 | regime switch | Does a group's set of partners turn over abruptly at some point in time? |
+| M4 | compound | Does a bounded cascade lie inside the interval that opens when a closure wave completes? |
+
+M4 is built so that both worlds satisfy each component on its own; only their composition in time
+differs.
+
+### Interfaces and models
+
+The same agent loop, task text and stopping rules are run with four tool interfaces:
+
+| | interface | what the agent gets |
+|---|---|---|
+| A0 | aggregates | full-horizon aggregates only; an identifiability control |
+| A1 | windowed primitives | aggregates over arbitrary time windows; temporal order must be reconstructed by interaction |
+| A2 | raw events + code | the raw `(u, v, t)` events in a sandboxed Python interpreter |
+| A3 | semantic operators | temporal operators such as Δ-bounded reachability and temporal closure |
+
+The models are `gpt-5-mini` and Claude Opus 5, plus a Qwen2.5-Instruct ladder (7B, 14B and 32B,
+AWQ) served locally through the same agent loop, and a deterministic reconstruction script as a
+reference.
+
+### Metrics
+
+- **PairAcc.** A pair counts only when both worlds are answered correctly.
+- **EVPairAcc.** Both answers must also be backed by evidence. A run is evidence-valid when its
+  answer is correct and at least one computation it cites as support passes `SemValid`, a
+  deterministic check that the call carries the task's constraints (the right bound, the right
+  interval).
+- **ExecEVPairAcc.** The same test applied to all executed steps, not only the cited ones. It
+  separates "computed the right thing but did not cite it" from "never computed it".
+
+### The headline result
+
+![M4: correct answers without task-faithful cited support](docs/m4_headline.png)
+
+On the compound workload M4 with semantic operators (A3), both models classify every pair
+correctly (PairAcc 1.00). Opus is evidence-valid in one of five pairs (EVPairAcc 0.20);
+`gpt-5-mini` in none (0.00). Its cited queries never instantiate the admissible interval; it infers
+the composition from arrival times in the returned payload instead (panel b: a query window that
+spans both cascades returns "reachable" in both worlds). **The final answer can be right while the cited analysis does not establish it.**
+
+Capability behaves differently.
+
+- A1 produces frontiers that depend on the model and the interaction budget.
+- Raw events (A2) remove the M1 frontier in the tested settings.
+- Nuisance activity and a four-fold larger graph push a configuration that succeeded on A1 back
+  below its frontier.
 
 ## Layout
 
@@ -30,6 +105,7 @@ evaluation/        deterministic scoring: checker, SemValid / error taxonomy, EV
 scripts/           analysis, figures, tests, and run orchestration (see below)
 runs/              the complete corpus: results.jsonl + stored traces per sweep
 figures/           the paper's figures, regenerated from runs/ by scripts/figure*.py
+docs/              images used in this README, rendered from the paper's figures
 PREREGISTRATION*.md  cell/model/analysis declarations frozen before each experiment,
                    including all protocol amendments and one disclosed execution incident
 ```
@@ -102,7 +178,34 @@ your own SLURM account/partition).
   `scripts/preflight_new_worlds.py` enforces this before any re-run.
 - `scripts/test_*.py` and `scripts/selftest_schemas.py` are the invariant and schema test suite.
 
-## Anonymity
+## Citation
 
-This artifact is anonymized for double-blind review: commits, traces, and configurations carry no
-author-identifying information, and site-specific compute settings are replaced by placeholders.
+If you use this code or corpus, please cite:
+
+> Xiaofei Zhang. 2027. Capability Is Not Validity: Evaluating Agentic Temporal Graph Analysis. In
+> *Proceedings of the Twentieth ACM International Conference on Web Search and Data Mining (WSDM
+> '27), February 15–19, 2027, Hong Kong, Hong Kong.* ACM, New York, NY, USA, 10 pages.
+> https://doi.org/10.1145/3862322.3863709
+
+```bibtex
+@inproceedings{zhang2027capability,
+  author    = {Zhang, Xiaofei},
+  title     = {Capability Is Not Validity: Evaluating Agentic Temporal Graph Analysis},
+  booktitle = {Proceedings of the Twentieth ACM International Conference on Web Search and Data Mining},
+  series    = {WSDM '27},
+  year      = {2027},
+  month     = feb,
+  location  = {Hong Kong, Hong Kong},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  isbn      = {979-8-4007-3117-4},
+  doi       = {10.1145/3862322.3863709},
+  url       = {https://doi.org/10.1145/3862322.3863709},
+  numpages  = {10},
+  keywords  = {agentic data analysis, temporal graphs, LLM agents, tool interfaces, evaluation}
+}
+```
+
+## License
+
+MIT (see `LICENSE`). The paper is published under a Creative Commons Attribution (CC BY) license.
